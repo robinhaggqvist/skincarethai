@@ -3,6 +3,8 @@ title: "ขมิ้นชัน (Turmeric)"
 slug: "turmeric"
 layout: "base.njk"
 date: "2025-10-22"
+tags: ["ingredients"]
+permalink: "/ingredients/turmeric/"
 ---
 
 ขมิ้นชันเป็นสมุนไพรไทยที่มีคุณสมบัติช่วยลดการอักเสบของผิว  
