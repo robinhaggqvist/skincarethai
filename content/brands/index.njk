@@ -1,0 +1,11 @@
+---
+title: "แบรนด์สกินแคร์ไทย"
+layout: base.njk
+permalink: "/brands/"
+---
+<h2>แบรนด์</h2>
+<ul>
+{%- for item in collections.brands -%}
+  <li><a href="{{ item.url }}">{{ item.data.title or item.fileSlug }}</a></li>
+{%- endfor -%}
+</ul>
