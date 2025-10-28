@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or "SkincareThai.com" }}</title>
+  <meta name="description" content="{{ description or 'คู่มือสกินแคร์ไทยจากธรรมชาติ' }}" />
+
+  {# Google AdSense (add your real client ID) #}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX"
+          crossorigin="anonymous"></script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", Arial, sans-serif; line-height:1.6; margin:0; padding:0; }
+    header, main, footer { max-width: 840px; margin: 0 auto; padding: 16px; }
+    header a { text-decoration:none; color:inherit; }
+    nav a { margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/"><h1>SkincareThai</h1></a>
+    <nav>
+      <a href="/ingredients/">ส่วนผสม</a>
+      <a href="/brands/">แบรนด์</a>
+      <a href="/blog/">บล็อก</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ content | safe }}
+
+    {# Example inline ad block (optional) #}
+    <ins class="adsbygoogle" style="display:block" data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </main>
+
+  <footer>
+    <p>© {{ "now" | date("yyyy") }} SkincareThai.com</p>
+  </footer>
+</body>
+</html>
