@@ -1,0 +1,11 @@
+---
+title: "บล็อก"
+layout: base.njk
+permalink: "/blog/"
+---
+<h2>บล็อก</h2>
+<ul>
+{%- for item in collections.blog -%}
+  <li><a href="{{ item.url }}">{{ item.data.title or item.fileSlug }}</a></li>
+{%- endfor -%}
+</ul>
