@@ -1,0 +1,11 @@
+---
+title: "ส่วนผสมสกินแคร์ไทย"
+layout: base.njk
+permalink: "/ingredients/"
+---
+<h2>ส่วนผสม</h2>
+<ul>
+{%- for item in collections.ingredients -%}
+  <li><a href="{{ item.url }}">{{ item.data.title or item.fileSlug }}</a></li>
+{%- endfor -%}
+</ul>
