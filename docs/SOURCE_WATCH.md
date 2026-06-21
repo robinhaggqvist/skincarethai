@@ -64,6 +64,12 @@ python scripts/report_source_watch.py --limit 20
 The report now also includes a **New Topics To Cover** section based on posts
 that were marked as a topic the source had not covered before.
 
+It also includes:
+
+- **Top Creators To Watch** ranked by freshness and activity
+- **Topics Not Yet Covered By Us** based on extracted topic hints that do not
+  appear in the current SkincareThai site coverage
+
 The report is also saved to:
 
 - `reports/source_watch_report.md`

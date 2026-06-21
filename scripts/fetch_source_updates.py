@@ -26,6 +26,26 @@ ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "source_watch.db"
 USER_AGENT = "Mozilla/5.0 (compatible; SkincareThaiSourceBot/1.0)"
 MAX_BODY_CHARS = 120_000
+TOPIC_HINTS = [
+    ("personal color", ["personal color", "personalcolour", "personal colour", "พีซี", "สีส่วนตัว", "คัลเลอร์" ]),
+    ("kids sunscreen", ["กันแดดเด็ก", "kids sunscreen", "กันแดดสำหรับเด็ก"]),
+    ("sachet sunscreen", ["กันแดดซอง", "sachet sunscreen", "ครีมกันแดดซอง"]),
+    ("pore tightening", ["รูขุมขน", "pore", "กระชับรูขุมขน"]),
+    ("hair loss shampoo", ["ผมร่วง", "hair loss", "แชมพูแก้ผมร่วง", "ผมบาง"]),
+    ("acne sunscreen", ["กันแดดคนเป็นสิว", "sunscreen for acne", "กันแดดสิว", "กันแดดสำหรับคนเป็นสิว"]),
+    ("leg scars", ["ขาลาย", "รอยที่ขา", "scar", "แผลเป็นที่ขา"]),
+    ("retinol", ["retinol", "เรตินอล"]),
+    ("niacinamide", ["niacinamide", "ไนอะซินาไมด์"]),
+    ("centella", ["centella", "cica", "ซีคา", "ใบบัวบก"]),
+    ("pdrn", ["pdrn"]),
+    ("vitamin c", ["vitamin c", "วิตามินซี"]),
+    ("moisturizer", ["moisturizer", "มอยเจอร์ไรเซอร์", "ครีมบำรุง"]),
+    ("cleanser", ["cleanser", "คลีนเซอร์", "คลีนซิ่ง", "cleansing oil"]),
+    ("serum", ["serum", "เซรั่ม"]),
+    ("sunscreen", ["sunscreen", "กันแดด"]),
+    ("acne", ["acne", "สิว"]),
+    ("dark spots", ["รอยดำ", "จุดด่างดำ", "ฝ้า", "กระ"]),
+]
 
 
 class TextExtractor(HTMLParser):
@@ -199,6 +219,24 @@ def classify_topic(title: str, content: str) -> str:
     return "other"
 
 
+def extract_topic_hints(title: str, content: str) -> list[str]:
+    blob = f"{title} {content}".lower()
+    hints: list[str] = []
+    for canonical, needles in TOPIC_HINTS:
+        if any(needle.lower() in blob for needle in needles):
+            hints.append(canonical)
+    # Keep the list short and stable.
+    unique: list[str] = []
+    seen = set()
+    for hint in hints:
+        key = hint.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(hint)
+    return unique[:5]
+
+
 def get_source_rows(conn: sqlite3.Connection) -> list[sqlite3.Row]:
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
@@ -279,6 +317,11 @@ def store_post(
     )
 
 
+def remember_topic_hints(conn: sqlite3.Connection, source_id: int, title: str, content: str) -> None:
+    for hint in extract_topic_hints(title, content):
+        remember_term(conn, source_id, hint, "topic_hint")
+
+
 def source_knows_term(conn: sqlite3.Connection, source_id: int, term: str, term_type: str = "topic") -> bool:
     row = conn.execute(
         "SELECT 1 FROM source_terms WHERE source_id = ? AND term = ? AND term_type = ?",
@@ -342,6 +385,7 @@ def process_source(conn: sqlite3.Connection, source: sqlite3.Row, limit: int) ->
                     is_new_topic,
                 )
                 remember_term(conn, int(source["id"]), topic, "topic")
+                remember_topic_hints(conn, int(source["id"]), title or "", extracted)
                 stored += 1
                 if title:
                     notes.append(title)
