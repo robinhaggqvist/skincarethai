@@ -43,6 +43,18 @@ python scripts/store_source_page.py \
   --text-file /tmp/extracted.txt
 ```
 
+3. Run the feed/link watcher:
+
+```bash
+python scripts/fetch_source_updates.py --limit 10
+```
+
+You can also target one source at a time:
+
+```bash
+python scripts/fetch_source_updates.py --source https://example.com --limit 20
+```
+
 ## Citation Rule
 
 - Prefer RSS feeds first.
@@ -56,3 +68,8 @@ python scripts/store_source_page.py \
 - Use the text as reference material for tone, structure, and vocabulary.
 - Do not copy long passages into SkincareThai pages.
 
+## Topic Learning
+
+- Each new post can add a topic term to the database.
+- Over time, the DB becomes a map of what each blogger covers well.
+- That lets us spot genuinely new topics instead of guessing from the site description.
