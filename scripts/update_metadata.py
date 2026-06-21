@@ -13,6 +13,7 @@ It avoids external dependencies so it can run on the VPS or locally.
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from urllib.parse import quote
@@ -37,6 +38,16 @@ def slug_to_label(slug: str) -> str:
     if not slug:
         return "SkincareThai"
     return slug[:1].upper() + slug[1:]
+
+
+def normalize_review_title(text: str) -> str:
+    if "หยือไม่ใช่" in text:
+        return "รองพื้นไม่เกาะผิวทำยังไง? 5 วิธีให้หน้าเนียนกริบ"
+    text = re.sub(r"^\s*เจาะลึกรีวิว\s*", "รีวิว ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*สรุปชัดจากทุกแหล่งโซเชียล\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s{2,}", " ", text)
+    text = re.sub(r"\s+:", ":", text)
+    return text.strip(" -:|")
 
 
 CATEGORY_LABELS = {
@@ -164,11 +175,15 @@ def title_for(path: Path, original: str | None) -> str:
     if path.name.endswith(".html") and path.parent == ROOT:
         return f"{ROOT_TITLES.get(path.name, slug_to_label(path.stem))} | SkincareThai"
     if path.name == "index.html":
+        if path.parent != ROOT and original:
+            base = original.split("|")[0].strip()
+            base = normalize_review_title(base)
+            return f"{base} | SkincareThai"
         parent = path.parent.name
         label = CATEGORY_LABELS.get(parent, slug_to_label(parent))
         return f"{label} | SkincareThai"
     if original:
-        return original.strip()
+        return normalize_review_title(original.strip())
     return "SkincareThai"
 
 
@@ -199,6 +214,87 @@ def canonical_for(path: Path) -> str:
     if rel.endswith(".html"):
         return f"{SITE_BASE}/{rel}"
     return f"{SITE_BASE}/{quote(rel)}"
+
+
+def schema_for(path: Path, title: str, description: str, canonical: str) -> str | None:
+    if path.name == "index.html" and path.parent == ROOT:
+        payload = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "SkincareThai",
+            "url": canonical,
+            "description": description,
+            "inLanguage": "th-TH",
+            "publisher": {
+                "@type": "Organization",
+                "name": "SkincareThai",
+                "url": SITE_BASE,
+            },
+        }
+    elif path.name == "index.html":
+        parent = path.parent.name
+        payload = {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": title,
+            "url": canonical,
+            "description": description,
+            "inLanguage": "th-TH",
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "SkincareThai",
+                "url": SITE_BASE,
+            },
+            "about": CATEGORY_LABELS.get(parent, slug_to_label(parent)),
+        }
+    else:
+        payload = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": title,
+            "url": canonical,
+            "description": description,
+            "inLanguage": "th-TH",
+            "isPartOf": {
+                "@type": "WebPage",
+                "url": canonical.rsplit("/", 1)[0] + "/",
+            },
+            "author": {
+                "@type": "Organization",
+                "name": "SkincareThai",
+                "url": SITE_BASE,
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "SkincareThai",
+                "url": SITE_BASE,
+            },
+        }
+    return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
+def replace_or_insert_schema(content: str, schema: str) -> str:
+    block = f'    <script type="application/ld+json">\n{schema}\n    </script>'
+    pattern = re.compile(r"\s*<script type=\"application/ld\+json\">.*?</script>\s*", re.IGNORECASE | re.DOTALL)
+    if pattern.search(content):
+        return pattern.sub("\n" + block + "\n", content, count=1)
+    return content.replace("</head>", block + "\n</head>", 1)
+
+
+def normalize_visible_titles(content: str) -> str:
+    content = re.sub(
+        r"(<h1 class=\"hero-title\">)(.*?)(</h1>)",
+        lambda m: f"{m.group(1)}{normalize_review_title(m.group(2))}{m.group(3)}",
+        content,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    content = re.sub(
+        r"(<h3 class=\"post-card-title\"><a[^>]*>)(.*?)(</a></h3>)",
+        lambda m: f"{m.group(1)}{normalize_review_title(re.sub(r'<[^>]+>', '', m.group(2)))}{m.group(3)}",
+        content,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    return content
 
 
 def insert_meta_block(head: str, tags: str) -> str:
@@ -293,6 +389,10 @@ def update_file(path: Path) -> bool:
             flags=re.IGNORECASE | re.DOTALL,
         )
     new_content = original[: head_match.start(1)] + new_head + original[head_match.end(1) :]
+    new_content = normalize_visible_titles(new_content)
+    schema = schema_for(path, title, description, canonical)
+    if schema:
+        new_content = replace_or_insert_schema(new_content, schema)
 
     if new_content != original:
         path.write_text(new_content, encoding="utf-8")
