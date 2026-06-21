@@ -55,6 +55,12 @@ You can also target one source at a time:
 python scripts/fetch_source_updates.py --source https://example.com --limit 20
 ```
 
+4. Generate a short report:
+
+```bash
+python scripts/report_source_watch.py --limit 20
+```
+
 ## Citation Rule
 
 - Prefer RSS feeds first.
@@ -73,3 +79,4 @@ python scripts/fetch_source_updates.py --source https://example.com --limit 20
 - Each new post can add a topic term to the database.
 - Over time, the DB becomes a map of what each blogger covers well.
 - That lets us spot genuinely new topics instead of guessing from the site description.
+- The report script is the quick view; it shows which sources have stored posts, new topics, and the latest check times.

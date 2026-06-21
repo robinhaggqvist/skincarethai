@@ -14,12 +14,9 @@ import argparse
 import html
 import re
 import sqlite3
-import sys
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Iterable
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
@@ -38,13 +35,13 @@ class TextExtractor(HTMLParser):
         self._skip_depth = 0
 
     def handle_starttag(self, tag, attrs):
-        if tag in {"script", "style", "noscript"}:
+        if tag in {"script", "style", "noscript", "svg", "iframe", "form", "nav", "footer", "header", "aside", "button"}:
             self._skip_depth += 1
         elif tag in {"p", "br", "div", "li", "section", "article", "h1", "h2", "h3"}:
             self.parts.append("\n")
 
     def handle_endtag(self, tag):
-        if tag in {"script", "style", "noscript"} and self._skip_depth:
+        if tag in {"script", "style", "noscript", "svg", "iframe", "form", "nav", "footer", "header", "aside", "button"} and self._skip_depth:
             self._skip_depth -= 1
         elif tag in {"p", "div", "li", "section", "article"}:
             self.parts.append("\n")
@@ -87,9 +84,27 @@ def decode_body(body: bytes) -> str:
 
 
 def extract_text_from_html(raw_html: str) -> str:
+    main_match = re.search(r"<(article|main)[^>]*>(.*?)</\1>", raw_html, flags=re.I | re.S)
+    if main_match:
+        raw_html = main_match.group(2)
+    body_match = re.search(r"<body[^>]*>(.*?)</body>", raw_html, flags=re.I | re.S)
+    if body_match:
+        raw_html = body_match.group(1)
     parser = TextExtractor()
     parser.feed(raw_html)
-    return parser.text()
+    text = parser.text()
+    lines = []
+    seen = set()
+    for line in (part.strip() for part in text.splitlines()):
+        if not line:
+            continue
+        if len(line) < 3:
+            continue
+        if line.lower() in seen:
+            continue
+        seen.add(line.lower())
+        lines.append(line)
+    return "\n".join(lines).strip()
 
 
 def extract_title(raw_html: str) -> str | None:
@@ -230,7 +245,7 @@ def store_post(
     extracted_text: str,
     is_new_topic: bool,
 ) -> None:
-    summary = extracted_text[:400] if extracted_text else None
+    summary = extracted_text[:500] if extracted_text else None
     conn.execute(
         """
         INSERT INTO source_posts (
@@ -311,6 +326,8 @@ def process_source(conn: sqlite3.Connection, source: sqlite3.Row, limit: int) ->
                 post_html = decode_body(post_body)
                 extracted = extract_text_from_html(post_html)
                 title = item["title"] or extract_title(post_html)
+                if not title:
+                    title = extract_description(post_html) or post_url
                 topic = classify_topic(title or "", extracted)
                 is_new_topic = not source_knows_term(conn, int(source["id"]), topic, "topic")
                 store_post(
