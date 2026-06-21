@@ -30,6 +30,18 @@ Thai-first routine for building new content on `skincarethai.com`.
 - FAQ in natural Thai.
 - 2 or more related internal links.
 
+
+## Source Discovery And Blogger Watch
+
+- Keep a watchlist of Thai beauty bloggers, magazines, forums, and clinic-backed sites.
+- Prefer RSS feeds first.
+- If no RSS exists, track the site URL, category page, or recent-posts page.
+- Record what each source writes about: acne, sunscreen, ingredient explainers, routines, comparisons, or product launches.
+- Check whether the source published anything new since the last scan.
+- Reuse the topic if it is valuable, but write a better Thai summary and add our own structure.
+- When citing a specific detail, link to the source page and use a short quote or paraphrase.
+- If the page supports text fragments, a `#:~:text=` link can jump to the exact text; if not, use the article URL plus a clear note.
+
 ## Style Rules
 
 - Use modern Thai, not translated marketing language.
