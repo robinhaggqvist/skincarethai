@@ -74,6 +74,19 @@ The report is also saved to:
 
 - `reports/source_watch_report.md`
 
+5. Generate a draft idea queue:
+
+```bash
+python scripts/generate_draft_queue.py --limit 20
+```
+
+The draft queue is saved to:
+
+- `reports/draft_idea_queue.md`
+
+If no new-topic signals exist yet, the script falls back to seed ideas from
+`data/keywords.csv` and a small list of high-intent skincare topics.
+
 ## Citation Rule
 
 - Prefer RSS feeds first.
@@ -94,3 +107,6 @@ The report is also saved to:
 - That lets us spot genuinely new topics instead of guessing from the site description.
 - The report script is the quick view; it shows which sources have stored posts, new topics, and the latest check times.
 - The report script also surfaces a ranked list of new-topic signals that can become future SkincareThai articles.
+- The draft queue script turns uncovered topic hints into concrete article ideas.
+- When the database is still sparse, the draft queue falls back to seed ideas
+  so the editorial pipeline still has something useful to work from.
