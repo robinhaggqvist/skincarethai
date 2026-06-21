@@ -64,6 +64,10 @@ python scripts/report_source_watch.py --limit 20
 The report now also includes a **New Topics To Cover** section based on posts
 that were marked as a topic the source had not covered before.
 
+The report is also saved to:
+
+- `reports/source_watch_report.md`
+
 ## Citation Rule
 
 - Prefer RSS feeds first.

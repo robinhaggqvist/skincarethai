@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "source_watch.db"
+REPORT_PATH = ROOT / "reports" / "source_watch_report.md"
 
 
 def main() -> int:
@@ -85,39 +86,44 @@ def main() -> int:
             (args.topic_limit,),
         ).fetchall()
 
-        print("# Source Watch Report")
-        print()
+        lines: list[str] = ["# Source Watch Report", ""]
         for row in rows:
-            print(f"## {row['source_name']}")
-            print(f"- URL: {row['website_url']}")
+            lines.append(f"## {row['source_name']}")
+            lines.append(f"- URL: {row['website_url']}")
             if row["rss_feed_url"]:
-                print(f"- RSS: {row['rss_feed_url']}")
-            print(f"- Posts stored: {row['post_count'] or 0}")
-            print(f"- New topics: {row['new_topic_count'] or 0}")
+                lines.append(f"- RSS: {row['rss_feed_url']}")
+            lines.append(f"- Posts stored: {row['post_count'] or 0}")
+            lines.append(f"- New topics: {row['new_topic_count'] or 0}")
             if row["topics"]:
-                print(f"- Topics: {row['topics']}")
+                lines.append(f"- Topics: {row['topics']}")
             if row["last_checked"]:
-                print(f"- Last checked: {row['last_checked']}")
+                lines.append(f"- Last checked: {row['last_checked']}")
             if row["last_seen_post_at"]:
-                print(f"- Last seen post: {row['last_seen_post_at']}")
-            print()
+                lines.append(f"- Last seen post: {row['last_seen_post_at']}")
+            lines.append("")
 
-        print("## New Topics To Cover")
-        print()
+        lines.append("## New Topics To Cover")
+        lines.append("")
         if topic_rows:
             for row in topic_rows:
-                print(f"- **{row['topic_label']}**: {row['post_count']} new post(s) across {row['source_count']} source(s)")
+                lines.append(f"- **{row['topic_label']}**: {row['post_count']} new post(s) across {row['source_count']} source(s)")
                 if row["sources"]:
-                    print(f"  - Sources: {row['sources']}")
+                    lines.append(f"  - Sources: {row['sources']}")
                 if row["example_source"]:
-                    print(f"  - Latest source: {row['example_source']}")
+                    lines.append(f"  - Latest source: {row['example_source']}")
                 if row["example_title"]:
-                    print(f"  - Example: {row['example_title']}")
+                    lines.append(f"  - Example: {row['example_title']}")
                 if row["example_url"]:
-                    print(f"  - URL: {row['example_url']}")
+                    lines.append(f"  - URL: {row['example_url']}")
         else:
-            print("- No new-topic signals yet.")
-        print()
+            lines.append("- No new-topic signals yet.")
+        lines.append("")
+
+        REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        REPORT_PATH.write_text("\n".join(lines), encoding="utf-8")
+
+        print("\n".join(lines))
+        print(f"\nSaved report to {REPORT_PATH}")
         return 0
     finally:
         conn.close()
