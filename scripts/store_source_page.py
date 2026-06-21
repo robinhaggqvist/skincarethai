@@ -13,12 +13,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import sqlite3
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "source_watch.db"
+GOOGLE_API_KEY_RE = re.compile(r"AIza[0-9A-Za-z_-]{20,}")
 
 
 def read_text(path: str | None) -> str | None:
@@ -28,6 +30,12 @@ def read_text(path: str | None) -> str | None:
     if not p.exists():
         return None
     return p.read_text(encoding="utf-8")
+
+
+def redact_secrets(text: str | None) -> str | None:
+    if text is None:
+        return None
+    return GOOGLE_API_KEY_RE.sub("[REDACTED_GOOGLE_API_KEY]", text)
 
 
 def main() -> int:
@@ -45,8 +53,8 @@ def main() -> int:
     parser.add_argument("--style-notes")
     args = parser.parse_args()
 
-    extracted_text = read_text(args.text_file)
-    raw_html = read_text(args.html_file)
+    extracted_text = redact_secrets(read_text(args.text_file))
+    raw_html = redact_secrets(read_text(args.html_file))
 
     conn = sqlite3.connect(DB_PATH)
     try:
@@ -86,8 +94,8 @@ def main() -> int:
                 1 if args.is_new_topic else 0,
                 raw_html,
                 extracted_text,
-                args.summary,
-                args.style_notes,
+                redact_secrets(args.summary),
+                redact_secrets(args.style_notes),
             ),
         )
         conn.commit()

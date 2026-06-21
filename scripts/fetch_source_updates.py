@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "source_watch.db"
 USER_AGENT = "Mozilla/5.0 (compatible; SkincareThaiSourceBot/1.0)"
 MAX_BODY_CHARS = 120_000
+GOOGLE_API_KEY_RE = re.compile(r"AIza[0-9A-Za-z_-]{20,}")
 TOPIC_HINTS = [
     ("personal color", ["personal color", "personalcolour", "personal colour", "พีซี", "สีส่วนตัว", "คัลเลอร์" ]),
     ("kids sunscreen", ["กันแดดเด็ก", "kids sunscreen", "กันแดดสำหรับเด็ก"]),
@@ -103,6 +104,12 @@ def decode_body(body: bytes) -> str:
     return body.decode("utf-8", errors="replace")
 
 
+def redact_secrets(text: str | None) -> str | None:
+    if text is None:
+        return None
+    return GOOGLE_API_KEY_RE.sub("[REDACTED_GOOGLE_API_KEY]", text)
+
+
 def extract_text_from_html(raw_html: str) -> str:
     main_match = re.search(r"<(article|main)[^>]*>(.*?)</\1>", raw_html, flags=re.I | re.S)
     if main_match:
@@ -124,14 +131,14 @@ def extract_text_from_html(raw_html: str) -> str:
             continue
         seen.add(line.lower())
         lines.append(line)
-    return "\n".join(lines).strip()
+    return redact_secrets("\n".join(lines).strip()) or ""
 
 
 def extract_title(raw_html: str) -> str | None:
     match = re.search(r"<title[^>]*>(.*?)</title>", raw_html, flags=re.I | re.S)
     if match:
         title = re.sub(r"\s+", " ", html.unescape(match.group(1))).strip()
-        return title or None
+        return redact_secrets(title) or None
     return None
 
 
@@ -142,7 +149,7 @@ def extract_description(raw_html: str) -> str | None:
         flags=re.I,
     )
     if match:
-        return html.unescape(match.group(1)).strip()
+        return redact_secrets(html.unescape(match.group(1)).strip())
     return None
 
 
@@ -309,9 +316,9 @@ def store_post(
             topic_label,
             classify_topic(post_title or "", extracted_text),
             1 if is_new_topic else 0,
-            raw_html,
-            extracted_text,
-            summary,
+            redact_secrets(raw_html),
+            redact_secrets(extracted_text),
+            redact_secrets(summary),
             None,
         ),
     )

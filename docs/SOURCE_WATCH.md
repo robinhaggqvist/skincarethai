@@ -14,9 +14,12 @@ Use this system to track Thai beauty bloggers, magazines, clinics, and community
 
 ## Database
 
-The SQLite database lives at:
+The SQLite database lives locally at:
 
 - `data/source_watch.db`
+
+It is intentionally kept out of Git so we can store source snapshots and style
+notes locally without exposing scraped page blobs in the repo.
 
 It stores:
 

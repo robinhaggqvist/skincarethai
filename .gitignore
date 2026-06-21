@@ -4,3 +4,4 @@ scripts/__pycache__/
 data/*.db-journal
 data/*.db-wal
 data/*.db-shm
+data/source_watch.db
