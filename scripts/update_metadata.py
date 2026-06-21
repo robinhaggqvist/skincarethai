@@ -91,6 +91,59 @@ CATEGORY_LABELS = {
     "ไฟฟ้าสถิต": "รีวิวไฟฟ้าสถิต",
 }
 
+ROOT_TITLES = {
+    "acne.html": "รีวิวสกินแคร์สำหรับคนเป็นสิว",
+    "anti-aging.html": "รีวิวสกินแคร์ลดเลือนริ้วรอย",
+    "beauty-sleep.html": "รีวิวบิวตี้สลีปและการฟื้นผิวตอนกลางคืน",
+    "belotelo.html": "รีวิว BELOTELO และงานผิวสายคลินิก",
+    "biore.html": "รีวิว Biore และไอเท็มดูแลผิวประจำวัน",
+    "cetaphil.html": "รีวิว Cetaphil สำหรับผิวแพ้ง่าย",
+    "cezanne.html": "รีวิว Cezanne เมคอัพสายคุมมัน",
+    "cleanser.html": "รีวิวคลีนเซอร์และคลีนซิ่ง",
+    "cutepress.html": "รีวิว Cute Press สกินแคร์และเมคอัพ",
+    "dr.jill.html": "รีวิว Dr.Jill และซีรั่มสายชุ่มชื้น",
+    "dr.wu.html": "รีวิว DR.WU และสกินแคร์สายบำรุง",
+    "galderma.html": "รีวิว Galderma และงานผิวเชิงคลินิก",
+    "hair-care.html": "รีวิวดูแลผมและแก้ปัญหาผมร่วง",
+    "innbeauty.html": "รีวิว Inn Beauty และไอเท็มเซเว่น",
+    "ipsa.html": "รีวิว IPSA และกันแดด/บำรุงเนื้อเบา",
+    "kanebo.html": "รีวิว KANEBO และงานผิวสายลักชัวรี",
+    "klairs.html": "รีวิว KLAIRS สำหรับผิวแพ้ง่าย",
+    "lancôme.html": "รีวิว Lancôme สกินแคร์และน้ำหอม",
+    "laneige.html": "รีวิว Laneige และงานผิวสายชุ่มชื้น",
+    "lip.html": "รีวิวลิปสติกและลิปบาล์ม",
+    "makeup.html": "รีวิวเมคอัพและงานผิว",
+    "melamii.html": "รีวิว Melamii และไอเท็มดูแลฝ้า",
+    "mizumi.html": "รีวิว MizuMi สำหรับผิวแพ้ง่าย",
+    "moisturizer.html": "รีวิวมอยเจอร์ไรเซอร์และครีมบำรุง",
+    "none.html": "รีวิวไม่มีแบรนด์และตัวเลือกเฉพาะทาง",
+    "ocean-skin.html": "รีวิว Ocean Skin และสกินแคร์ราคาดี",
+    "perfume.html": "รีวิวน้ำหอมและกลิ่นหอมติดทน",
+    "prada-beauty.html": "รีวิว Prada Beauty และงานบิวตี้สายลักชัวรี",
+    "scagel.html": "รีวิว Scagel และเจลแต้มสิว",
+    "sekkisei.html": "รีวิว SEKKISEI และงานผิวสายชุ่มชื้น",
+    "senka.html": "รีวิว SENKA และคลีนเซอร์ญี่ปุ่น",
+    "sk-ii.html": "รีวิว SK-II และพิเทร่าในมุมใช้งานจริง",
+    "skintific.html": "รีวิว Skintific และงานผิวเนียนกริบ",
+    "sunscreen.html": "รีวิวกันแดดและไอเท็มปกป้องผิว",
+    "teoxane.html": "รีวิว TEOXANE และฟิลเลอร์งานผิว",
+    "thermage.html": "รีวิว Thermage และเทคโนโลยียกกระชับ",
+    "thursday-plantation.html": "รีวิว Thursday Plantation และทีทรีออยล์",
+    "whitening.html": "รีวิวผิวกระจ่างใสและลดรอยคล้ำ",
+    "you.html": "รีวิว YOU และกันแดดสายคุมมัน",
+    "yanhee.html": "รีวิวยันฮีและไอเท็มดูแลเส้นผม",
+    "ข้อศอกดำ.html": "ข้อศอกดำแก้ยังไง",
+    "ทำจมูก.html": "รีวิวทำจมูกและประสบการณ์คลินิก",
+    "บลัช.html": "รีวิวบลัชออนและสีแก้ม",
+    "รองพื้น.html": "รีวิวรองพื้นและงานผิว",
+    "รีวิวเครื่องสำอาง.html": "รีวิวเครื่องสำอางทั้งหมด",
+    "ลิปกลอส.html": "รีวิวลิปกลอสและลิปฉ่ำวาว",
+    "เซรั่มผิวกาย.html": "รีวิวเซรั่มผิวกาย",
+    "แป้ง.html": "รีวิวแป้งและแป้งผสมรองพื้น",
+    "แป้งขาวมณี.html": "รีวิวแป้งขาวมณี",
+    "ไฟฟ้าสถิต.html": "ไฟฟ้าสถิตเกิดจากอะไร",
+}
+
 
 def category_label(path: Path) -> str | None:
     parts = path.relative_to(ROOT).parts
@@ -109,9 +162,7 @@ def title_for(path: Path, original: str | None) -> str:
     if path.name == "index.html" and path.parent == ROOT:
         return "SkincareThai | รีวิวสกินแคร์ เครื่องสำอาง และบิวตี้ภาษาไทย"
     if path.name.endswith(".html") and path.parent == ROOT:
-        stem = path.stem
-        label = CATEGORY_LABELS.get(stem, slug_to_label(stem))
-        return f"{label} | SkincareThai"
+        return f"{ROOT_TITLES.get(path.name, slug_to_label(path.stem))} | SkincareThai"
     if path.name == "index.html":
         parent = path.parent.name
         label = CATEGORY_LABELS.get(parent, slug_to_label(parent))
