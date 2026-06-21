@@ -61,6 +61,9 @@ python scripts/fetch_source_updates.py --source https://example.com --limit 20
 python scripts/report_source_watch.py --limit 20
 ```
 
+The report now also includes a **New Topics To Cover** section based on posts
+that were marked as a topic the source had not covered before.
+
 ## Citation Rule
 
 - Prefer RSS feeds first.
@@ -80,3 +83,4 @@ python scripts/report_source_watch.py --limit 20
 - Over time, the DB becomes a map of what each blogger covers well.
 - That lets us spot genuinely new topics instead of guessing from the site description.
 - The report script is the quick view; it shows which sources have stored posts, new topics, and the latest check times.
+- The report script also surfaces a ranked list of new-topic signals that can become future SkincareThai articles.

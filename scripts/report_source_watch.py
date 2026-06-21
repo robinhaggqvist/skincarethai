@@ -15,6 +15,7 @@ DB_PATH = ROOT / "data" / "source_watch.db"
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--topic-limit", type=int, default=15)
     args = parser.parse_args()
 
     conn = sqlite3.connect(DB_PATH)
@@ -41,6 +42,49 @@ def main() -> int:
             (args.limit,),
         ).fetchall()
 
+        topic_rows = conn.execute(
+            """
+            WITH topic_counts AS (
+                SELECT
+                    p.topic_label,
+                    COUNT(*) AS post_count,
+                    COUNT(DISTINCT p.source_id) AS source_count,
+                    GROUP_CONCAT(DISTINCT s.source_name) AS sources
+                FROM source_posts p
+                JOIN sources s ON s.id = p.source_id
+                WHERE p.is_new_topic = 1
+                GROUP BY p.topic_label
+            ), latest_example AS (
+                SELECT
+                    p.topic_label,
+                    p.post_title,
+                    p.post_url,
+                    s.source_name,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p.topic_label
+                        ORDER BY COALESCE(p.published_at, p.discovered_at, p.id) DESC, p.id DESC
+                    ) AS rn
+                FROM source_posts p
+                JOIN sources s ON s.id = p.source_id
+                WHERE p.is_new_topic = 1
+            )
+            SELECT
+                c.topic_label,
+                c.post_count,
+                c.source_count,
+                c.sources,
+                e.post_title AS example_title,
+                e.post_url AS example_url,
+                e.source_name AS example_source
+            FROM topic_counts c
+            LEFT JOIN latest_example e
+                ON e.topic_label = c.topic_label AND e.rn = 1
+            ORDER BY c.post_count DESC, c.source_count DESC, c.topic_label ASC
+            LIMIT ?
+            """,
+            (args.topic_limit,),
+        ).fetchall()
+
         print("# Source Watch Report")
         print()
         for row in rows:
@@ -57,6 +101,23 @@ def main() -> int:
             if row["last_seen_post_at"]:
                 print(f"- Last seen post: {row['last_seen_post_at']}")
             print()
+
+        print("## New Topics To Cover")
+        print()
+        if topic_rows:
+            for row in topic_rows:
+                print(f"- **{row['topic_label']}**: {row['post_count']} new post(s) across {row['source_count']} source(s)")
+                if row["sources"]:
+                    print(f"  - Sources: {row['sources']}")
+                if row["example_source"]:
+                    print(f"  - Latest source: {row['example_source']}")
+                if row["example_title"]:
+                    print(f"  - Example: {row['example_title']}")
+                if row["example_url"]:
+                    print(f"  - URL: {row['example_url']}")
+        else:
+            print("- No new-topic signals yet.")
+        print()
         return 0
     finally:
         conn.close()
