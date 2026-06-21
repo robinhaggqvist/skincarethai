@@ -1,41 +1,46 @@
 # Draft Idea Queue
 
-## รีวิวครีมหน้าใส ในมุมที่คนไทยกำลังสนใจ
-- Topic hint: รีวิวครีมหน้าใส
-- Seed idea: 0 hint(s) from 0 source(s)
+## Centella / Cica ช่วยอะไร? สรุปแบบเข้าใจง่าย
+- Topic hint: centella
+- Draft idea: 1 hint(s) from 1 source(s)
+- Sources: Jeban
+- Latest source: Jeban
+- Example post: ทำความสะอาดผิวหน้า/Facial Cleanser
+- URL: https://daisy.jeban.com/list/face/facial-cleanser
 - Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
 
-## whitening cream review ในมุมที่คนไทยกำลังสนใจ
-- Topic hint: whitening cream review
-- Seed idea: 0 hint(s) from 0 source(s)
+## ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ
+- Topic hint: leg scars
+- Draft idea: 1 hint(s) from 1 source(s)
+- Sources: Jeban
+- Latest source: Jeban
+- Example post: ทำความสะอาดผิวหน้า/Facial Cleanser
+- URL: https://daisy.jeban.com/list/face/facial-cleanser
 - Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
 
-## serum pantip ในมุมที่คนไทยกำลังสนใจ
-- Topic hint: serum pantip
-- Seed idea: 0 hint(s) from 0 source(s)
+## Niacinamide ใช้ยังไงให้เห็นผล? เหมาะกับผิวแบบไหน
+- Topic hint: niacinamide
+- Draft idea: 1 hint(s) from 1 source(s)
+- Sources: Jeban
+- Latest source: Jeban
+- Example post: ทำความสะอาดผิวหน้า/Facial Cleanser
+- URL: https://daisy.jeban.com/list/face/facial-cleanser
 - Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
 
-## ครีมหน้าใสไหนดี ในมุมที่คนไทยกำลังสนใจ
-- Topic hint: ครีมหน้าใสไหนดี
-- Seed idea: 0 hint(s) from 0 source(s)
+## เรตินอลเริ่มยังไงให้ปลอดภัย? คู่มือสำหรับมือใหม่
+- Topic hint: retinol
+- Draft idea: 1 hint(s) from 1 source(s)
+- Sources: Jeban
+- Latest source: Jeban
+- Example post: ทำความสะอาดผิวหน้า/Facial Cleanser
+- URL: https://daisy.jeban.com/list/face/facial-cleanser
 - Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
 
-## ครีมหน้าใสราคา ในมุมที่คนไทยกำลังสนใจ
-- Topic hint: ครีมหน้าใสราคา
-- Seed idea: 0 hint(s) from 0 source(s)
-- Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
-
-## Personal Color คืออะไร? วิธีเช็กโทนที่เหมาะกับผิวคนไทย
-- Topic hint: personal color
-- Seed idea: 0 hint(s) from 0 source(s)
-- Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
-
-## กันแดดเด็กเลือกยังไง? รวมแนวทางเลือกแบบปลอดภัยและใช้จริง
-- Topic hint: kids sunscreen
-- Seed idea: 0 hint(s) from 0 source(s)
-- Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.
-
-## กันแดดซองตัวไหนดี? ตัวเลือกคุ้มๆ สำหรับพกง่ายและใช้ทุกวัน
-- Topic hint: sachet sunscreen
-- Seed idea: 0 hint(s) from 0 source(s)
+## วิตามินซีทาหน้าเลือกยังไง? ใช้คู่กับอะไรดีและควรระวังอะไร
+- Topic hint: vitamin c
+- Draft idea: 1 hint(s) from 1 source(s)
+- Sources: Jeban
+- Latest source: Jeban
+- Example post: ทำความสะอาดผิวหน้า/Facial Cleanser
+- URL: https://daisy.jeban.com/list/face/facial-cleanser
 - Suggested angle: Compare what Thai readers want with the source writer's details, then add our own practical verdict.

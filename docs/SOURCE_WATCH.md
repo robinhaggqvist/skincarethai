@@ -87,6 +87,22 @@ The draft queue is saved to:
 If no new-topic signals exist yet, the script falls back to seed ideas from
 `data/keywords.csv` and a small list of high-intent skincare topics.
 
+6. Build a short content calendar:
+
+```bash
+python scripts/build_content_calendar.py --limit 7
+```
+
+The calendar is saved to:
+
+- `reports/content_calendar.md`
+
+7. Run the full cycle in one shot:
+
+```bash
+python scripts/run_source_watch_cycle.py
+```
+
 ## Citation Rule
 
 - Prefer RSS feeds first.
@@ -110,3 +126,6 @@ If no new-topic signals exist yet, the script falls back to seed ideas from
 - The draft queue script turns uncovered topic hints into concrete article ideas.
 - When the database is still sparse, the draft queue falls back to seed ideas
   so the editorial pipeline still has something useful to work from.
+- The calendar script turns the current queue into dated draft slots.
+- The runner script fetches sources, updates reports, builds the draft queue,
+  and writes the content calendar in one go.
