@@ -30,6 +30,21 @@ Thai-first routine for building new content on `skincarethai.com`.
 - FAQ in natural Thai.
 - 2 or more related internal links.
 
+## Daily Page Growth
+
+- Keep pages link-light by default.
+- Use `reports/content_calendar.md` and `reports/draft_idea_queue.md` as the daily source of truth for new page ideas.
+- The daily growth job should publish new static pages equal to about 5% of the current page count, not just tweak existing promo links.
+- Keep the new pages Thai-first, useful, and short enough to read quickly.
+- Update the homepage latest-posts block and `sitemap.xml` whenever new pages are published.
+- If a draft idea is too thin, skip it for the day instead of forcing a bad page.
+
+## Promo Links
+
+- Use `data/products.csv` as the promo pool when a product naturally fits the page.
+- Before inserting a link, verify the destination still resolves to the expected product.
+- If the link looks stale or mismatched, skip it and leave the page clean.
+
 
 ## Source Discovery And Blogger Watch
 
@@ -56,4 +71,3 @@ Thai-first routine for building new content on `skincarethai.com`.
 - Is the vocabulary common in Thai beauty content?
 - Are there repeated phrases that should be cut?
 - Does the page point to related pages?
-

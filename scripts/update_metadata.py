@@ -18,6 +18,8 @@ import re
 from pathlib import Path
 from urllib.parse import quote
 
+from seo_images import select_page_image
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE_BASE = "https://skincarethai.com"
@@ -217,6 +219,12 @@ def canonical_for(path: Path) -> str:
 
 
 def schema_for(path: Path, title: str, description: str, canonical: str) -> str | None:
+    image_url = None
+    if path.exists():
+        try:
+            image_url, _ = select_page_image(ROOT, path, path.read_text(encoding="utf-8"), title, description, SITE_BASE)
+        except Exception:
+            image_url = None
     if path.name == "index.html" and path.parent == ROOT:
         payload = {
             "@context": "https://schema.org",
@@ -225,6 +233,7 @@ def schema_for(path: Path, title: str, description: str, canonical: str) -> str 
             "url": canonical,
             "description": description,
             "inLanguage": "th-TH",
+            **({"image": image_url} if image_url else {}),
             "publisher": {
                 "@type": "Organization",
                 "name": "SkincareThai",
@@ -240,6 +249,7 @@ def schema_for(path: Path, title: str, description: str, canonical: str) -> str 
             "url": canonical,
             "description": description,
             "inLanguage": "th-TH",
+            **({"image": image_url} if image_url else {}),
             "isPartOf": {
                 "@type": "WebSite",
                 "name": "SkincareThai",
@@ -255,6 +265,7 @@ def schema_for(path: Path, title: str, description: str, canonical: str) -> str 
             "url": canonical,
             "description": description,
             "inLanguage": "th-TH",
+            **({"image": image_url} if image_url else {}),
             "isPartOf": {
                 "@type": "WebPage",
                 "url": canonical.rsplit("/", 1)[0] + "/",
@@ -330,6 +341,22 @@ def insert_meta_block(head: str, tags: str) -> str:
             count=0,
             flags=re.IGNORECASE,
         )
+    if "property=\"og:image\"" in head:
+        head = re.sub(
+            r"\s*<meta property=\"og:image[^\"]*\"[^>]*>\s*",
+            "\n",
+            head,
+            count=0,
+            flags=re.IGNORECASE,
+        )
+    if "name=\"twitter:image\"" in head:
+        head = re.sub(
+            r"\s*<meta name=\"twitter:image[^\"]*\"[^>]*>\s*",
+            "\n",
+            head,
+            count=0,
+            flags=re.IGNORECASE,
+        )
     if "name=\"theme-color\"" in head:
         head = re.sub(
             r"\s*<meta name=\"theme-color\"[^>]*>\s*",
@@ -355,6 +382,8 @@ def update_file(path: Path) -> bool:
     title = title_for(path, original_title)
     description = description_for(path, title)
     canonical = canonical_for(path)
+    image_url, image_alt = select_page_image(ROOT, path, original, title, description, SITE_BASE)
+    og_type = "website" if path == ROOT / "index.html" or (path.name.endswith(".html") and path.parent == ROOT) else "article"
 
     if "<head>" not in original or "</head>" not in original:
         return False
@@ -367,10 +396,14 @@ def update_file(path: Path) -> bool:
             f'    <meta property="og:title" content="{title}">',
             f'    <meta property="og:description" content="{description}">',
             f'    <meta property="og:url" content="{canonical}">',
-            '    <meta property="og:type" content="website">',
+            f'    <meta property="og:type" content="{og_type}">',
+            f'    <meta property="og:image" content="{image_url}">',
+            f'    <meta property="og:image:alt" content="{image_alt}">',
             f'    <meta name="twitter:card" content="summary_large_image">',
             f'    <meta name="twitter:title" content="{title}">',
             f'    <meta name="twitter:description" content="{description}">',
+            f'    <meta name="twitter:image" content="{image_url}">',
+            f'    <meta name="twitter:image:alt" content="{image_alt}">',
             f'    <meta name="theme-color" content="{THEME_COLOR}">',
         ]
     )
