@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -18,38 +17,86 @@
     <meta name="twitter:image" content="https://skincarethai.com/assets/images/social/home.svg">
     <meta name="twitter:image:alt" content="SkincareThai | รีวิวสกินแคร์ เครื่องสำอาง และบิวตี้ภาษาไทย">
     <meta name="theme-color" content="#f5efe9">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkincareThai | รีวิวสกินแคร์ เครื่องสำอาง และบิวตี้ภาษาไทย</title>
 <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1d1d1f; background: #ffffff; -webkit-font-smoothing: antialiased; }
-        .nav { position: sticky; top: 0; background: rgba(255, 255, 255, 0.8); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0, 0, 0, 0.1); padding: 18px 0; z-index: 1000; }
-        .nav-content { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 21px; font-weight: 600; letter-spacing: -0.5px; color: #1d1d1f; text-decoration: none; }
-        .hero-section { min-height: 50vh; display: flex; align-items: center; justify-content: center; padding: 100px 40px; background: #fbfbfd; text-align: center; }
-        .hero-title { font-size: 64px; font-weight: 600; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
-        .hero-subtitle { font-size: 24px; color: #6e6e73; max-width: 800px; margin: 0 auto; }
-        .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 32px; font-weight: 600; margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .post-card { background: #fbfbfd; border-radius: 18px; border: 1px solid #eee; transition: transform 0.3s ease; overflow: hidden; }
-        .post-card:hover { transform: translateY(-5px); }
-        .post-card-content { padding: 30px; }
-        .post-card-title a { font-size: 20px; font-weight: 600; color: #1d1d1f; text-decoration: none; line-height: 1.3; display: block; margin-bottom: 10px; }
-        .post-card-title a:hover { color: #0071e3; }
-        .post-card-date { font-size: 14px; color: #888; }
-        .footer { background: #fbfbfd; padding: 60px 40px; border-top: 1px solid #eee; margin-top: 80px; }
-        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
-        .footer-column { display: flex; flex-direction: column; }
-        .footer-logo { font-size: 21px; font-weight: 600; color: #1d1d1f; text-decoration: none; margin-bottom: 15px; }
-        .footer-desc { color: #6e6e73; font-size: 14px; line-height: 1.6; max-width: 300px; }
-        .footer-heading { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #1d1d1f; letter-spacing: 1px; margin-bottom: 20px; }
-        .footer-link { color: #6e6e73; font-size: 14px; text-decoration: none; margin-bottom: 12px; transition: color 0.2s; }
-        .footer-link:hover { color: #0071e3; }
-        .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid #e5e5e5; text-align: center; color: #888; font-size: 12px; }
-        @media (max-width: 768px) { .footer-content { grid-template-columns: 1fr; gap: 30px; } }
-        @media (max-width: 734px) { .hero-title { font-size: 42px; } .post-grid { grid-template-columns: 1fr; } }
-    </style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Sarabun', 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; line-height: 1.7; color: #2d2d2d; background: #faf8f5; -webkit-font-smoothing: antialiased; }
+
+/* ===== NAV ===== */
+.nav { position: sticky; top: 0; background: rgba(250, 248, 245, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.06); padding: 14px 0; z-index: 1000; }
+.nav-content { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 22px; font-weight: 700; color: #b07d6e; text-decoration: none; letter-spacing: -0.3px; }
+.logo:hover { color: #8c5f52; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { font-size: 14px; color: #6e6e73; text-decoration: none; transition: color 0.2s; font-weight: 500; }
+.nav-links a:hover { color: #b07d6e; }
+
+/* ===== HERO ===== */
+.hero { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px 80px; background: linear-gradient(135deg, #faf8f5 0%, #f5ede8 50%, #efe4dc 100%); text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(176,125,110,0.08) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(176,125,110,0.06) 0%, transparent 60%); pointer-events: none; }
+.hero-content { position: relative; z-index: 1; max-width: 800px; }
+.hero-badge { display: inline-block; background: rgba(176,125,110,0.12); color: #b07d6e; font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.5px; }
+.hero-title { font-size: clamp(36px, 6vw, 56px); font-weight: 700; line-height: 1.2; margin-bottom: 20px; color: #2d2d2d; letter-spacing: -1px; }
+.hero-subtitle { font-size: clamp(17px, 2.5vw, 22px); color: #6e6e73; max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+.hero-stats { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+.stat-item { text-align: center; }
+.stat-number { font-size: 28px; font-weight: 700; color: #b07d6e; }
+.stat-label { font-size: 13px; color: #8e8e93; margin-top: 2px; }
+
+/* ===== CATEGORY SECTIONS ===== */
+.category-section { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid #e8ddd6; }
+.section-emoji { font-size: 28px; line-height: 1; }
+.section-title { font-size: 24px; font-weight: 700; color: #2d2d2d; }
+.section-count { font-size: 13px; color: #8e8e93; background: #f0ebe6; padding: 3px 12px; border-radius: 100px; margin-left: auto; }
+
+/* ===== TOPIC CARDS ===== */
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.topic-card { display: block; background: #fff; border-radius: 14px; border: 1px solid #ece5de; padding: 20px 24px; text-decoration: none; transition: all 0.25s ease; }
+.topic-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(176,125,110,0.10); border-color: #d6c5bb; }
+.topic-card-title { font-size: 16px; font-weight: 600; color: #2d2d2d; margin-bottom: 6px; line-height: 1.4; }
+.topic-card-title:hover { color: #b07d6e; }
+.topic-card-snippet { font-size: 14px; color: #8e8e93; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ===== CALL TO ACTION ===== */
+.cta-section { max-width: 1100px; margin: 0 auto; padding: 48px 24px 64px; text-align: center; }
+.cta-card { background: linear-gradient(135deg, #f5ede8, #efe4dc); border-radius: 20px; padding: 48px 32px; }
+.cta-title { font-size: 24px; font-weight: 700; color: #2d2d2d; margin-bottom: 12px; }
+.cta-desc { font-size: 16px; color: #6e6e73; margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+.cta-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-link { display: inline-block; padding: 10px 24px; background: #b07d6e; color: #fff; border-radius: 100px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.cta-link:hover { background: #8c5f52; transform: translateY(-2px); }
+.cta-link-outline { display: inline-block; padding: 10px 24px; background: transparent; color: #b07d6e; border: 2px solid #b07d6e; border-radius: 100px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+.cta-link-outline:hover { background: rgba(176,125,110,0.08); transform: translateY(-2px); }
+
+/* ===== FOOTER ===== */
+.footer { background: #2d2d2d; padding: 56px 24px 32px; margin-top: 0; }
+.footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+.footer-logo { font-size: 20px; font-weight: 700; color: #f0ebe6; text-decoration: none; margin-bottom: 12px; display: inline-block; }
+.footer-desc { color: #a8a8a8; font-size: 14px; line-height: 1.7; max-width: 360px; }
+.footer-heading { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #8e8e93; letter-spacing: 1.5px; margin-bottom: 16px; }
+.footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+.footer-link { color: #c8c8c8; font-size: 13px; text-decoration: none; transition: color 0.2s; padding: 3px 0; }
+.footer-link:hover { color: #f0ebe6; }
+.footer-bottom { max-width: 1100px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; color: #6e6e73; font-size: 12px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .footer-content { grid-template-columns: 1fr; gap: 32px; }
+    .footer-links { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 24px; }
+    .topic-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .hero { padding: 80px 20px 60px; }
+    .category-section { padding: 32px 16px; }
+    .cta-card { padding: 32px 20px; }
+}
+</style>
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -68,178 +115,229 @@
     </script>
 </head>
 <body>
-    <nav class="nav"><div class="nav-content"><a href="/" class="logo">SkincareThai</a></div></nav>
-    <section class="hero-section">
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="/" class="logo">SkincareThai</a>
+            <div class="nav-links">
+                <a href="/">หน้าแรก</a>
+                <a href="/whitening.html">Whitening</a>
+                <a href="/sunscreen.html">Sunscreen</a>
+                <a href="/acne.html">Acne</a>
+                <a href="/sitemap.xml">ทั้งหมด</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">รีวิวสกินแคร์และบิวตี้ภาษาไทย ที่อ่านง่ายและใช้ตัดสินใจได้จริง</h1>
+            <div class="hero-badge">✦ รีวิวสกินแคร์สำหรับคนไทย</div>
+            <h1 class="hero-title">รีวิวสกินแคร์และบิวตี้<br>ที่อ่านง่ายและใช้ตัดสินใจได้จริง</h1>
             <p class="hero-subtitle">รวมรีวิว เครื่องสำอาง สกินแคร์ และไอเท็มบิวตี้จากหลายแหล่ง พร้อมสรุปแบบไทยร่วมสมัยสำหรับคนที่อยากเลือกของให้ตรงผิวและงบ</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">บทความรีวิว</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">หมวดหมู่</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">40+</div>
+                    <div class="stat-label">แบรนด์ที่รีวิว</div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Latest Posts -->
-    <main class="section">
-        <h2 class="section-title">บทความล่าสุด</h2>
-        <div class="post-grid">
+        <section class="category-section" id="ผิวหน้า">
+            <div class="section-header">
+                <span class="section-emoji">✨</span>
+                <h2 class="section-title">ผิวหน้า</h2>
+                <span class="section-count">10 บทความ</span>
+            </div>
+            <div class="topic-grid">
+            <a href="/topics/niacinamide-ใช้ยังไงให้เห็นผล-เหมาะกับผิวแบบไหน/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">Niacinamide ใช้ยังไงให้เห็นผล? เหมาะกับผิวแบบไหน</h3>
+                    <p class="topic-card-snippet">Niacinamide ใช้ยังไงให้เห็นผล? เหมาะกับผิวแบบไหน | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเ...</p>
+                </div>
+            </a>
+            <a href="/topics/personal-color-คืออะไร-วิธีเช็กโทนที่เหมาะกับผิวคนไทย/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">Personal Color คืออะไร? วิธีเช็กโทนที่เหมาะกับผิวคนไทย</h3>
+                    <p class="topic-card-snippet">Personal Color คืออะไร? วิธีเช็กโทนที่เหมาะกับผิวคนไทย | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะ...</p>
+                </div>
+            </a>
+            <a href="/topics/serum-pantip-ในมุมที่คนไทยกำลังสนใจ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">serum pantip ในมุมที่คนไทยกำลังสนใจ</h3>
+                    <p class="topic-card-snippet">serum pantip ในมุมที่คนไทยกำลังสนใจ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะกับใคร</p>
+                </div>
+            </a>
+            <a href="/topics/whitening-cream-review-ในมุมที่คนไทยกำลังสนใจ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">whitening cream review ในมุมที่คนไทยกำลังสนใจ</h3>
+                    <p class="topic-card-snippet">whitening cream review ในมุมที่คนไทยกำลังสนใจ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมา...</p>
+                </div>
+            </a>
+            <a href="/topics/ครีมหน้าใสราคา-ในมุมที่คนไทยกำลังสนใจ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ครีมหน้าใสราคา ในมุมที่คนไทยกำลังสนใจ</h3>
+                    <p class="topic-card-snippet">ครีมหน้าใสราคา ในมุมที่คนไทยกำลังสนใจ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะกับใคร</p>
+                </div>
+            </a>
+            <a href="/topics/ครีมหน้าใสไหนดี-ในมุมที่คนไทยกำลังสนใจ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ครีมหน้าใสไหนดี ในมุมที่คนไทยกำลังสนใจ</h3>
+                    <p class="topic-card-snippet">ครีมหน้าใสไหนดี ในมุมที่คนไทยกำลังสนใจ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะกับใคร</p>
+                </div>
+            </a>
+            <a href="/topics/รีวิวครีมหน้าใส-ในมุมที่คนไทยกำลังสนใจ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">รีวิวครีมหน้าใส ในมุมที่คนไทยกำลังสนใจ</h3>
+                    <p class="topic-card-snippet">รีวิวครีมหน้าใส ในมุมที่คนไทยกำลังสนใจ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะกับใคร</p>
+                </div>
+            </a>
+            <a href="/topics/รูขุมขนกว้างแก้ยังไง-วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">รูขุมขนกว้างแก้ยังไง? วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์</h3>
+                    <p class="topic-card-snippet">รูขุมขนกว้างแก้ยังไง? วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และค...</p>
+                </div>
+            </a>
+            <a href="/topics/วิตามินซีทาหน้าเลือกยังไง-ใช้คู่กับอะไรดีและควรระวังอะไร/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">วิตามินซีทาหน้าเลือกยังไง? ใช้คู่กับอะไรดีและควรระวังอะไร</h3>
+                    <p class="topic-card-snippet">วิตามินซีทาหน้าเลือกยังไง? ใช้คู่กับอะไรดีและควรระวังอะไร | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำ...</p>
+                </div>
+            </a>
+            <a href="/topics/เรตินอลเริ่มยังไงให้ปลอดภัย-คู่มือสำหรับมือใหม่/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">เรตินอลเริ่มยังไงให้ปลอดภัย? คู่มือสำหรับมือใหม่</h3>
+                    <p class="topic-card-snippet">เรตินอลเริ่มยังไงให้ปลอดภัย? คู่มือสำหรับมือใหม่ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเ...</p>
+                </div>
+            </a>
+            </div>
+        </section>
+        <section class="category-section" id="กันแดด">
+            <div class="section-header">
+                <span class="section-emoji">☀️</span>
+                <h2 class="section-title">กันแดด</h2>
+                <span class="section-count">3 บทความ</span>
+            </div>
+            <div class="topic-grid">
+            <a href="/topics/กันแดดคนเป็นสิวควรเลือกแบบไหน-เนื้อสัมผัสและส่วนผสมที่ควรมองหา/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">กันแดดคนเป็นสิวควรเลือกแบบไหน? เนื้อสัมผัสและส่วนผสมที่ควรมองหา</h3>
+                    <p class="topic-card-snippet">กันแดดคนเป็นสิวควรเลือกแบบไหน? เนื้อสัมผัสและส่วนผสมที่ควรมองหา | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง...</p>
+                </div>
+            </a>
+            <a href="/topics/กันแดดซองตัวไหนดี-ตัวเลือกคุ้มๆ-สำหรับพกง่ายและใช้ทุกวัน/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">กันแดดซองตัวไหนดี? ตัวเลือกคุ้มๆ สำหรับพกง่ายและใช้ทุกวัน</h3>
+                    <p class="topic-card-snippet">กันแดดซองตัวไหนดี? ตัวเลือกคุ้มๆ สำหรับพกง่ายและใช้ทุกวัน | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำ...</p>
+                </div>
+            </a>
+            <a href="/topics/กันแดดเด็กเลือกยังไง-รวมแนวทางเลือกแบบปลอดภัยและใช้จริง/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">กันแดดเด็กเลือกยังไง? รวมแนวทางเลือกแบบปลอดภัยและใช้จริง</h3>
+                    <p class="topic-card-snippet">กันแดดเด็กเลือกยังไง? รวมแนวทางเลือกแบบปลอดภัยและใช้จริง | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแ...</p>
+                </div>
+            </a>
+            </div>
+        </section>
+        <section class="category-section" id="ผิวกาย">
+            <div class="section-header">
+                <span class="section-emoji">🦵</span>
+                <h2 class="section-title">ผิวกาย</h2>
+                <span class="section-count">4 บทความ</span>
+            </div>
+            <div class="topic-grid">
+            <a href="/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-3/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</h3>
+                    <p class="topic-card-snippet">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะก...</p>
+                </div>
+            </a>
+            <a href="/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-2/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</h3>
+                    <p class="topic-card-snippet">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะก...</p>
+                </div>
+            </a>
+            <a href="/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</h3>
+                    <p class="topic-card-snippet">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะก...</p>
+                </div>
+            </a>
+            <a href="/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-4/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</h3>
+                    <p class="topic-card-snippet">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และคำแนะนำว่าเหมาะก...</p>
+                </div>
+            </a>
+            </div>
+        </section>
+        <section class="category-section" id="ผม">
+            <div class="section-header">
+                <span class="section-emoji">💇‍♀️</span>
+                <h2 class="section-title">ผม</h2>
+                <span class="section-count">1 บทความ</span>
+            </div>
+            <div class="topic-grid">
+            <a href="/topics/แชมพูแก้ผมร่วงเลือกยังไง-สิ่งที่ควรดูและตัวอย่างแนวทางดูแล/" class="topic-card">
+                <div class="topic-card-body">
+                    <h3 class="topic-card-title">แชมพูแก้ผมร่วงเลือกยังไง? สิ่งที่ควรดูและตัวอย่างแนวทางดูแล</h3>
+                    <p class="topic-card-snippet">แชมพูแก้ผมร่วงเลือกยังไง? สิ่งที่ควรดูและตัวอย่างแนวทางดูแล | SkincareThai สรุปแบบภาษาไทยจากหลายแหล่งข้อมูล พร้อมประเด็นสำคัญ ข้อดี ข้อควรระวัง และ...</p>
+                </div>
+            </a>
+            </div>
+        </section>
 
-            <section class="featured-section">
-        <h2>บทความและรีวิว</h2>
-        <div class="post-card-grid">
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/niacinamide-ใช้ยังไงให้เห็นผล-เหมาะกับผิวแบบไหน/">Niacinamide ใช้ยังไงให้เห็นผล? เหมาะกับผิวแบบไหน</a></h3>
+    <section class="cta-section">
+        <div class="cta-card">
+            <h2 class="cta-title">🔍 กำลังมองหารีวิวแบรนด์ไหนอยู่?</h2>
+            <p class="cta-desc">ดูรีวิวสินค้าตามแบรนด์ที่คุณสนใจ พร้อมข้อมูลส่วนผสมและความคิดเห็นจากผู้ใช้จริง</p>
+            <div class="cta-links">
+                <a href="/whitening.html" class="cta-link">Whitening ✨</a>
+                <a href="/sunscreen.html" class="cta-link">Sunscreen ☀️</a>
+                <a href="/acne.html" class="cta-link">Acne 🔴</a>
+                <a href="/anti-aging.html" class="cta-link-outline">Anti-Aging ⏳</a>
             </div>
         </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/personal-color-คืออะไร-วิธีเช็กโทนที่เหมาะกับผิวคนไทย/">Personal Color คืออะไร? วิธีเช็กโทนที่เหมาะกับผิวคนไทย</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/serum-pantip-ในมุมที่คนไทยกำลังสนใจ/">serum pantip ในมุมที่คนไทยกำลังสนใจ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/whitening-cream-review-ในมุมที่คนไทยกำลังสนใจ/">whitening cream review ในมุมที่คนไทยกำลังสนใจ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/กันแดดคนเป็นสิวควรเลือกแบบไหน-เนื้อสัมผัสและส่วนผสมที่ควรมองหา/">กันแดดคนเป็นสิวควรเลือกแบบไหน? เนื้อสัมผัสและส่วนผสมที่ควรมองหา</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/กันแดดซองตัวไหนดี-ตัวเลือกคุ้มๆ-สำหรับพกง่ายและใช้ทุกวัน/">กันแดดซองตัวไหนดี? ตัวเลือกคุ้มๆ สำหรับพกง่ายและใช้ทุกวัน</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/กันแดดเด็กเลือกยังไง-รวมแนวทางเลือกแบบปลอดภัยและใช้จริง/">กันแดดเด็กเลือกยังไง? รวมแนวทางเลือกแบบปลอดภัยและใช้จริง</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ/">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-2/">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-3/">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ขาลายแก้ยังไง-วิธีดูแลรอยและผิวไม่สม่ำเสมอ-4/">ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ครีมหน้าใสราคา-ในมุมที่คนไทยกำลังสนใจ/">ครีมหน้าใสราคา ในมุมที่คนไทยกำลังสนใจ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/ครีมหน้าใสไหนดี-ในมุมที่คนไทยกำลังสนใจ/">ครีมหน้าใสไหนดี ในมุมที่คนไทยกำลังสนใจ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/รีวิวครีมหน้าใส-ในมุมที่คนไทยกำลังสนใจ/">รีวิวครีมหน้าใส ในมุมที่คนไทยกำลังสนใจ</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/รูขุมขนกว้างแก้ยังไง-วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์/">รูขุมขนกว้างแก้ยังไง? วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/วิตามินซีทาหน้าเลือกยังไง-ใช้คู่กับอะไรดีและควรระวังอะไร/">วิตามินซีทาหน้าเลือกยังไง? ใช้คู่กับอะไรดีและควรระวังอะไร</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/เรตินอลเริ่มยังไงให้ปลอดภัย-คู่มือสำหรับมือใหม่/">เรตินอลเริ่มยังไงให้ปลอดภัย? คู่มือสำหรับมือใหม่</a></h3>
-            </div>
-        </div>
-        <div class="post-card">
-            <div class="post-card-content">
-                <h3 class="post-card-title"><a href="https://skincarethai.com/topics/แชมพูแก้ผมร่วงเลือกยังไง-สิ่งที่ควรดูและตัวอย่างแนวทางดูแล/">แชมพูแก้ผมร่วงเลือกยังไง? สิ่งที่ควรดูและตัวอย่างแนวทางดูแล</a></h3>
-            </div>
-        </div>
-        </div>
-    </section><footer class="footer">
+    </section>
+
+    <footer class="footer">
         <div class="footer-content">
             <div class="footer-column">
                 <a href="/" class="footer-logo">SkincareThai</a>
                 <p class="footer-desc">แหล่งรวมรีวิวสกินแคร์ เครื่องสำอาง และไอเท็มบิวตี้จากข้อมูลจริง พร้อมสรุปภาษาไทยที่อ่านง่ายและช่วยให้เลือกซื้อได้ตรงกับผิวมากขึ้น</p>
             </div>
             <div class="footer-column">
-                <h4 class="footer-heading">เมนูหลัก</h4>
-                <a href="/" class="footer-link">หน้าแรก (Home)</a>
-                <a href="/" class="footer-link">บทความทั้งหมด (Reviews)</a>
-                <a href="/sitemap.xml" class="footer-link">แผนผังเว็บไซต์ (Sitemap)</a>
-            </div>
-            <div class="footer-column">
                 <h4 class="footer-heading">หมวดหมู่สินค้า</h4>
-                <a href="/acne.html" class="footer-link">Acne</a>
-<a href="/anti-aging.html" class="footer-link">Anti-Aging</a>
-<a href="/belotelo.html" class="footer-link">BELOTELO</a>
-<a href="/beauty-sleep.html" class="footer-link">Beauty Sleep</a>
-<a href="/biore.html" class="footer-link">Biore</a>
-<a href="/cetaphil.html" class="footer-link">Cetaphil</a>
-<a href="/cezanne.html" class="footer-link">Cezanne</a>
-<a href="/cleanser.html" class="footer-link">Cleanser</a>
-<a href="/cutepress.html" class="footer-link">Cutepress</a>
-<a href="/dr.wu.html" class="footer-link">DR.WU</a>
-<a href="/dr.jill.html" class="footer-link">Dr.Jill</a>
-<a href="/galderma.html" class="footer-link">Galderma</a>
-<a href="/hair-care.html" class="footer-link">Hair Care</a>
-<a href="/ipsa.html" class="footer-link">IPSA</a>
-<a href="/innbeauty.html" class="footer-link">InnBeauty</a>
-<a href="/kanebo.html" class="footer-link">KANEBO</a>
-<a href="/klairs.html" class="footer-link">KLAIRS</a>
-<a href="/lancôme.html" class="footer-link">Lancôme</a>
-<a href="/laneige.html" class="footer-link">Laneige</a>
-<a href="/lip.html" class="footer-link">Lip</a>
-<a href="/makeup.html" class="footer-link">Makeup</a>
-<a href="/melamii.html" class="footer-link">Melamii</a>
-<a href="/mizumi.html" class="footer-link">MizuMi</a>
-<a href="/moisturizer.html" class="footer-link">Moisturizer</a>
-<a href="/none.html" class="footer-link">None</a>
-<a href="/ocean-skin.html" class="footer-link">Ocean Skin</a>
-<a href="/perfume.html" class="footer-link">Perfume</a>
-<a href="/prada-beauty.html" class="footer-link">Prada Beauty</a>
-<a href="/sekkisei.html" class="footer-link">SEKKISEI</a>
-<a href="/senka.html" class="footer-link">SENKA</a>
-<a href="/sk-ii.html" class="footer-link">SK-II</a>
-<a href="/scagel.html" class="footer-link">Scagel</a>
-<a href="/skintific.html" class="footer-link">Skintific</a>
-<a href="/sunscreen.html" class="footer-link">Sunscreen</a>
-<a href="/teoxane.html" class="footer-link">TEOXANE</a>
-<a href="/thermage.html" class="footer-link">THERMAGE</a>
-<a href="/thursday-plantation.html" class="footer-link">Thursday Plantation</a>
-<a href="/whitening.html" class="footer-link">Whitening</a>
-<a href="/you.html" class="footer-link">YOU</a>
-<a href="/yanhee.html" class="footer-link">Yanhee</a>
-<a href="/ข้อศอกดำ.html" class="footer-link">ข้อศอกดำ</a>
-<a href="/ทำจมูก.html" class="footer-link">ทำจมูก</a>
-<a href="/บลัช.html" class="footer-link">บลัช</a>
-<a href="/รองพื้น.html" class="footer-link">รองพื้น</a>
-<a href="/รีวิวเครื่องสำอาง.html" class="footer-link">รีวิวเครื่องสำอาง</a>
-<a href="/ลิปกลอส.html" class="footer-link">ลิปกลอส</a>
-<a href="/เซรั่มผิวกาย.html" class="footer-link">เซรั่มผิวกาย</a>
-<a href="/แป้ง.html" class="footer-link">แป้ง</a>
-<a href="/แป้งขาวมณี.html" class="footer-link">แป้งขาวมณี</a>
-<a href="/ไฟฟ้าสถิต.html" class="footer-link">ไฟฟ้าสถิต</a>
-
+                <div class="footer-links">
+                <a href="/" class="footer-link">🏠 หน้าแรก</a>
+                <a href="/sitemap.xml" class="footer-link">📚 บทความทั้งหมด</a>
+                <a href="/whitening.html" class="footer-link">✨ Whitening</a>
+                <a href="/sunscreen.html" class="footer-link">☀️ Sunscreen</a>
+                <a href="/acne.html" class="footer-link">🔴 Acne</a>
+                <a href="/anti-aging.html" class="footer-link">⏳ Anti-Aging</a>
+                <a href="/cleanser.html" class="footer-link">🧴 Cleanser</a>
+                <a href="/moisturizer.html" class="footer-link">💧 Moisturizer</a>
+                <a href="/makeup.html" class="footer-link">💄 Makeup</a>
+                <a href="/lip.html" class="footer-link">💋 Lip</a>
+                <a href="/perfume.html" class="footer-link">🌸 Perfume</a>
+                <a href="/hair-care.html" class="footer-link">💇‍♀️ Hair Care</a>
+                <a href="/biore.html" class="footer-link">🧼 Biore</a>
+                <a href="/cetaphil.html" class="footer-link">🧴 Cetaphil</a>
+                <a href="/sk-ii.html" class="footer-link">💎 SK-II</a>
+                <a href="/laneige.html" class="footer-link">💙 Laneige</a>
+                <a href="/lanc%C3%B4me.html" class="footer-link">🌹 Lancôme</a>
+                <a href="/senka.html" class="footer-link">🧪 Senka</a>
+                <a href="/yanhee.html" class="footer-link">🏥 Yanhee</a>
+                <a href="/none.html" class="footer-link">🛡️ None</a>
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
@@ -248,4 +346,3 @@
     </footer>
 </body>
 </html>
-
