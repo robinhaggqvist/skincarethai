@@ -104,6 +104,13 @@ The calendar is saved to:
 
 ```bash
 python scripts/run_source_watch_cycle.py
+
+## Unpublished draft review
+
+The daily publisher saves every skipped draft to `reports/unpublished_drafts.jsonl`
+with a reason (below quality threshold, duplicate/live page, or held by the growth
+cap). A monthly review writes `reports/monthly_unpublished_review.md` so reusable
+drafts can be consolidated or reconsidered instead of disappearing.
 ```
 
 ## Citation Rule

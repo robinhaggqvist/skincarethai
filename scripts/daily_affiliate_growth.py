@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Daily page-growth runner for SkincareThai.
-
-The cron name still says "affiliate growth", but the live rule from Robin is:
-grow the site by adding new published pages equal to about 5% of the current
-page count. This script turns the next draft ideas into static HTML pages,
-updates the sitemap, refreshes the homepage latest-posts block, and marks the
-used calendar rows as published.
-"""
+"""Quality-gated daily publisher for SkincareThai."""
 
 from __future__ import annotations
 
@@ -17,7 +10,6 @@ import math
 import re
 import subprocess
 import sys
-from collections import OrderedDict
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -26,11 +18,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SITE_BASE = "https://skincarethai.com"
 REPORT_PATH = ROOT / "reports" / "daily_page_growth.md"
+UNPUBLISHED_PATH = ROOT / "reports" / "unpublished_drafts.jsonl"
 CALENDAR_PATH = ROOT / "reports" / "content_calendar.md"
 QUEUE_PATH = ROOT / "reports" / "draft_idea_queue.md"
 SITEMAP_PATH = ROOT / "sitemap.xml"
 HOMEPAGE_PATH = ROOT / "index.html"
 METADATA_SCRIPT = ROOT / "scripts" / "update_metadata.py"
+REMOTE_HOST = "root@5.181.217.86"
+REMOTE_KEY = Path("/home/robin/.ssh/homemodsau_server")
+REMOTE_ROOT = "/home/skincarethai.com/public_html"
 
 
 @dataclass(frozen=True)
@@ -39,6 +35,18 @@ class DraftItem:
     topic: str
     sources: str = ""
     source_hint: str = ""
+    seed_hints: int = 0
+    seed_sources: int = 0
+    suggested_angle: str = ""
+    priority: int = 0
+
+
+@dataclass(frozen=True)
+class QualityAssessment:
+    item: DraftItem
+    score: int
+    reasons: list[str]
+    eligible: bool
 
 
 TOPIC_PROFILES: dict[str, dict[str, object]] = {
@@ -114,6 +122,8 @@ TOPIC_PROFILES: dict[str, dict[str, object]] = {
     },
 }
 
+GENERIC_ANGLE = "Compare what Thai readers want with the source writer's details, then add our own practical verdict."
+
 
 def page_count() -> int:
     return sum(1 for path in ROOT.rglob("*.html") if path.is_file())
@@ -131,38 +141,31 @@ def normalize(text: str) -> str:
     return text.strip("-")
 
 
-def parse_markdown_items(path: Path) -> list[DraftItem]:
-    if not path.exists():
-        return []
-    text = path.read_text(encoding="utf-8")
-    items: list[DraftItem] = []
-    blocks = re.split(r"\n(?=## )", text)
-    for block in blocks:
-        title_match = re.match(r"##\s+(.+)", block)
-        topic_match = re.search(r"- Topic hint:\s*(.+)", block)
-        if not title_match or not topic_match:
-            continue
-        raw_title = title_match.group(1).strip()
-        title = raw_title.split("·", 1)[-1].strip() if "·" in raw_title else raw_title
-        topic = topic_match.group(1).strip()
-        sources_match = re.search(r"- Sources:\s*(.+)", block)
-        source_match = re.search(r"- Latest source:\s*(.+)", block)
-        items.append(
-            DraftItem(
-                title=title,
-                topic=topic,
-                sources=(sources_match.group(1).strip() if sources_match else ""),
-                source_hint=(source_match.group(1).strip() if source_match else ""),
-            )
-        )
-    return items
+def page_url(path: Path) -> str:
+    rel = path.relative_to(ROOT).as_posix()
+    if rel == "index.html":
+        return SITE_BASE + "/"
+    if rel.endswith("/index.html"):
+        return SITE_BASE + "/" + rel[:-10]
+    return SITE_BASE + "/" + rel
 
 
-def parse_queue_items(path: Path) -> list[DraftItem]:
+def social_asset_path(page_path: Path) -> Path:
+    rel = page_path.relative_to(ROOT)
+    if rel.as_posix() == "index.html":
+        return ROOT / "assets" / "images" / "social" / "home.svg"
+    if rel.name == "index.html":
+        return ROOT / "assets" / "images" / "social" / rel.parent / "cover.svg"
+    if rel.suffix.lower() == ".html":
+        return ROOT / "assets" / "images" / "social" / rel.with_suffix(".svg")
+    return ROOT / "assets" / "images" / "social" / rel / "cover.svg"
+
+
+def parse_markdown_items(path: Path) -> dict[str, DraftItem]:
     if not path.exists():
-        return []
+        return {}
     text = path.read_text(encoding="utf-8")
-    items: list[DraftItem] = []
+    items: dict[str, DraftItem] = {}
     for block in re.split(r"\n(?=## )", text):
         title_match = re.match(r"##\s+(.+)", block)
         topic_match = re.search(r"- Topic hint:\s*(.+)", block)
@@ -170,14 +173,79 @@ def parse_queue_items(path: Path) -> list[DraftItem]:
             continue
         raw_title = title_match.group(1).strip()
         title = raw_title.split("·", 1)[-1].strip() if "·" in raw_title else raw_title
-        items.append(
-            DraftItem(
-                title=title,
-                topic=topic_match.group(1).strip(),
-                sources=re.search(r"- Sources:\s*(.+)", block).group(1).strip() if re.search(r"- Sources:\s*(.+)", block) else "",
-            )
+        priority_match = re.search(r"- Priority:\s*(\d+)\s*/", block)
+        items[title.lower()] = DraftItem(
+            title=title,
+            topic=topic_match.group(1).strip(),
+            sources=(re.search(r"- Sources:\s*(.+)", block).group(1).strip() if re.search(r"- Sources:\s*(.+)", block) else ""),
+            source_hint=(re.search(r"- Latest source:\s*(.+)", block).group(1).strip() if re.search(r"- Latest source:\s*(.+)", block) else ""),
+            priority=(int(priority_match.group(1)) if priority_match else 0),
         )
     return items
+
+
+def parse_queue_items(path: Path) -> dict[str, DraftItem]:
+    if not path.exists():
+        return {}
+    text = path.read_text(encoding="utf-8")
+    items: dict[str, DraftItem] = {}
+    for block in re.split(r"\n(?=## )", text):
+        title_match = re.match(r"##\s+(.+)", block)
+        topic_match = re.search(r"- Topic hint:\s*(.+)", block)
+        if not title_match or not topic_match:
+            continue
+        raw_title = title_match.group(1).strip()
+        title = raw_title.split("·", 1)[-1].strip() if "·" in raw_title else raw_title
+        seed_match = re.search(r"- Seed idea:\s*(\d+)\s+hint\(s\)\s+from\s+(\d+)\s+source\(s\)", block)
+        draft_match = re.search(r"- Draft idea:\s*(\d+)\s+hint\(s\)\s+from\s+(\d+)\s+source\(s\)", block)
+        support_hints_match = re.search(r"- Supporting hints:\s*(\d+)", block)
+        support_sources_match = re.search(r"- Supporting sources:\s*(\d+)", block)
+        angle_match = re.search(r"- Suggested angle:\s*(.+)", block)
+        items[title.lower()] = DraftItem(
+            title=title,
+            topic=topic_match.group(1).strip(),
+            sources=re.search(r"- Sources:\s*(.+)", block).group(1).strip() if re.search(r"- Sources:\s*(.+)", block) else "",
+            seed_hints=(
+                int(support_hints_match.group(1))
+                if support_hints_match
+                else int((seed_match or draft_match).group(1)) if (seed_match or draft_match) else 0
+            ),
+            seed_sources=(
+                int(support_sources_match.group(1))
+                if support_sources_match
+                else int((seed_match or draft_match).group(2)) if (seed_match or draft_match) else 0
+            ),
+            suggested_angle=(angle_match.group(1).strip() if angle_match else ""),
+        )
+    return items
+
+
+def collect_candidates() -> list[DraftItem]:
+    calendar_items = parse_markdown_items(CALENDAR_PATH)
+    queue_items = parse_queue_items(QUEUE_PATH)
+    ordered: list[DraftItem] = []
+    seen: set[str] = set()
+
+    for key, item in calendar_items.items():
+        queue_item = queue_items.get(key)
+        merged = DraftItem(
+            title=item.title,
+            topic=item.topic,
+            sources=item.sources,
+            source_hint=item.source_hint,
+            seed_hints=(queue_item.seed_hints if queue_item else 0),
+            seed_sources=(queue_item.seed_sources if queue_item else 0),
+            suggested_angle=(queue_item.suggested_angle if queue_item else ""),
+            priority=item.priority,
+        )
+        ordered.append(merged)
+        seen.add(key)
+
+    for key, item in queue_items.items():
+        if key in seen:
+            continue
+        ordered.append(item)
+    return ordered
 
 
 def topic_key(topic: str, title: str) -> str:
@@ -214,11 +282,7 @@ def build_fallback_profile(title: str, topic: str) -> dict[str, object]:
 
 
 def profile_for(item: DraftItem) -> dict[str, object]:
-    key = topic_key(item.topic, item.title)
-    profile = TOPIC_PROFILES.get(key)
-    if profile:
-        return profile
-    return build_fallback_profile(item.title, item.topic)
+    return TOPIC_PROFILES.get(topic_key(item.topic, item.title)) or build_fallback_profile(item.title, item.topic)
 
 
 def make_page_slug(item: DraftItem, profile: dict[str, object]) -> str:
@@ -230,35 +294,15 @@ def make_page_path(item: DraftItem, profile: dict[str, object]) -> Path:
     folder = ROOT.joinpath(*[str(part) for part in profile["path"]])
     slug = make_page_slug(item, profile)
     candidate = folder / slug / "index.html"
-    suffix = 2
-    while candidate.exists():
-        candidate = folder / f"{slug}-{suffix}" / "index.html"
-        suffix += 1
     return candidate
 
 
-def relative_url(path: Path) -> str:
-    rel = path.relative_to(ROOT).as_posix()
-    if rel.endswith("/index.html"):
-        return "/" + rel[:-10]
-    if rel == "index.html":
-        return "/"
-    if rel.endswith(".html"):
-        return "/" + rel
-    return "/" + rel.rstrip("/")
-
-
-def page_title(item: DraftItem) -> str:
-    return item.title.strip()
-
-
 def page_description(item: DraftItem, profile: dict[str, object]) -> str:
-    summary = str(profile["summary"])
-    return f"{page_title(item)} | SkincareThai. {summary}"
+    return f"{item.title.strip()} | SkincareThai. {str(profile['summary'])}"
 
 
 def build_html(item: DraftItem, profile: dict[str, object], canonical: str) -> str:
-    title = page_title(item)
+    title = item.title.strip()
     description = page_description(item, profile)
     subtitle = str(profile["subtitle"])
     summary = str(profile["summary"])
@@ -274,11 +318,9 @@ def build_html(item: DraftItem, profile: dict[str, object], canonical: str) -> s
         """
         for question, answer in profile["faq"]
     )
-    related = "".join(
-        f'<li><a href="{href}">{html.escape(label)}</a></li>'
-        for href, label in profile["related"]
-    )
-    source_line = f"<strong>แหล่งที่ใช้ในรอบนี้:</strong> {html.escape(item.sources or item.source_hint or 'content calendar')}"
+    related = "".join(f'<li><a href="{href}">{html.escape(label)}</a></li>' for href, label in profile["related"])
+    evidence = item.sources or item.source_hint or "ยังไม่มีแหล่งอ้างอิงที่ชัดพอสำหรับการเผยแพร่"
+    source_line = f"<strong>แหล่งที่ใช้ในรอบนี้:</strong> {html.escape(evidence)}"
     return f"""<!DOCTYPE html>
 <html lang="th">
 <head>
@@ -327,18 +369,6 @@ def build_html(item: DraftItem, profile: dict[str, object], canonical: str) -> s
             .grid {{ grid-template-columns: 1fr; }}
         }}
     </style>
-    <script type="application/ld+json">{json.dumps({
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": title,
-        "url": canonical,
-        "description": description,
-        "inLanguage": "th-TH",
-        "datePublished": date.today().isoformat(),
-        "dateModified": date.today().isoformat(),
-        "author": {"@type": "Organization", "name": "SkincareThai", "url": SITE_BASE},
-        "publisher": {"@type": "Organization", "name": "SkincareThai", "url": SITE_BASE},
-    }, ensure_ascii=False)}</script>
 </head>
 <body>
     <nav class="nav"><div class="nav-inner"><a class="brand" href="/">SkincareThai</a><a href="/sitemap.xml">Sitemap</a></div></nav>
@@ -347,7 +377,7 @@ def build_html(item: DraftItem, profile: dict[str, object], canonical: str) -> s
             <span class="eyebrow">Published {format_date()}</span>
             <h1>{html.escape(title)}</h1>
             <p class="subtitle">{html.escape(subtitle)}</p>
-            <p class="meta">อ่านเร็ว: หน้าใหม่นี้เป็นส่วนหนึ่งของ daily page growth และตั้งใจให้เป็นสรุปที่ช่วยตัดสินใจได้จริง</p>
+            <p class="meta">หน้านี้จะถูกเผยแพร่ก็ต่อเมื่อผ่านเกณฑ์คุณภาพ 90/100 ขึ้นไปเท่านั้น</p>
         </section>
 
         <section class="grid">
@@ -442,88 +472,300 @@ def mark_calendar_published(selected_titles: set[str]) -> bool:
     return False
 
 
-def collect_candidates(limit: int) -> list[DraftItem]:
-    calendar_items = parse_markdown_items(CALENDAR_PATH)
-    queue_items = parse_queue_items(QUEUE_PATH)
-    seen: set[str] = set()
-    candidates: list[DraftItem] = []
-    for item in calendar_items + queue_items:
-        key = item.title.strip().lower()
-        if not key or key in seen:
-            continue
-        seen.add(key)
-        candidates.append(item)
-        if len(candidates) >= limit:
-            break
-    return candidates
+def save_unpublished(items: list[tuple[DraftItem, str, str]]) -> int:
+    """Persist every non-published candidate with a reason for the next review."""
+    existing: dict[str, dict[str, object]] = {}
+    if UNPUBLISHED_PATH.exists():
+        for line in UNPUBLISHED_PATH.read_text(encoding="utf-8").splitlines():
+            try:
+                row = json.loads(line)
+                existing[str(row.get("key"))] = row
+            except json.JSONDecodeError:
+                continue
+    for item, reason, status in items:
+        key = f"{item.title.strip().lower()}|{item.topic.strip().lower()}"
+        row = existing.get(key, {"key": key, "first_seen": date.today().isoformat()})
+        row.update({
+            "title": item.title,
+            "topic": item.topic,
+            "sources": item.sources,
+            "source_hint": item.source_hint,
+            "priority": item.priority,
+            "reason": reason,
+            "status": status,
+            "last_seen": date.today().isoformat(),
+        })
+        existing[key] = row
+    UNPUBLISHED_PATH.parent.mkdir(parents=True, exist_ok=True)
+    UNPUBLISHED_PATH.write_text(
+        "".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in existing.values()),
+        encoding="utf-8",
+    )
+    return len(items)
+
+
+def assess_quality(item: DraftItem, threshold: int) -> QualityAssessment:
+    score = 45
+    reasons: list[str] = []
+
+    if item.sources:
+        score += 12
+        reasons.append("calendar has named sources")
+    elif item.source_hint:
+        score += 8
+        reasons.append("calendar has latest source hint")
+    else:
+        reasons.append("no explicit source listed in calendar")
+
+    if item.seed_sources >= 3:
+        score += 14
+        reasons.append(f"queue is backed by {item.seed_sources} sources")
+    elif item.seed_sources >= 1:
+        score += 9
+        reasons.append(f"queue is backed by {item.seed_sources} source")
+    else:
+        reasons.append("queue has 0 source backing")
+
+    if item.seed_hints >= 3:
+        score += 10
+        reasons.append(f"queue has {item.seed_hints} topic hints")
+    elif item.seed_hints >= 1:
+        score += 6
+        reasons.append(f"queue has {item.seed_hints} topic hint")
+    else:
+        reasons.append("queue has 0 topic hints")
+
+    if item.suggested_angle and item.suggested_angle != GENERIC_ANGLE:
+        score += 8
+        reasons.append("angle is custom instead of boilerplate")
+    else:
+        reasons.append("angle is still boilerplate")
+
+    if re.search(r"[ก-๙]", item.title):
+        score += 5
+        reasons.append("title is Thai-first")
+    if "?" in item.title or "อย่างไร" in item.title or "ยังไง" in item.title or "ดีไหม" in item.title:
+        score += 4
+        reasons.append("title reads like a real query")
+
+    if item.priority >= 5:
+        score += 2
+        reasons.append("high-priority draft")
+
+    score = min(score, 100)
+    return QualityAssessment(item=item, score=score, reasons=reasons, eligible=score >= threshold)
+
+
+def run_metadata(paths: list[Path], dry_run: bool) -> tuple[bool, list[Path]]:
+    if dry_run or not paths:
+        return False, []
+    relative_paths = [str(path.relative_to(ROOT)) for path in paths]
+    subprocess.run([sys.executable, str(METADATA_SCRIPT), *relative_paths], cwd=ROOT, check=True)
+    assets = [social_asset_path(path) for path in paths if social_asset_path(path).exists()]
+    return True, assets
+
+
+def ssh_base() -> list[str]:
+    return [
+        "ssh",
+        "-i",
+        str(REMOTE_KEY),
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=accept-new",
+        REMOTE_HOST,
+    ]
+
+
+def deploy_files(paths: list[Path], dry_run: bool) -> bool:
+    if dry_run or not paths:
+        return False
+    unique_paths = sorted({path.resolve() for path in paths if path.exists()})
+    for path in unique_paths:
+        rel = path.relative_to(ROOT).as_posix()
+        remote_dir = str(Path(REMOTE_ROOT, rel).parent)
+        subprocess.run([*ssh_base(), f"mkdir -p {remote_dir!r}"], check=True)
+        subprocess.run(
+            [
+                "rsync",
+                "-az",
+                "--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r",
+                "-e",
+                f"ssh -i {REMOTE_KEY} -o BatchMode=yes -o StrictHostKeyChecking=accept-new",
+                str(path),
+                f"{REMOTE_HOST}:{REMOTE_ROOT}/{rel}",
+            ],
+            check=True,
+        )
+    return True
+
+
+def verify_live(page_urls: list[str], dry_run: bool) -> tuple[bool, bool]:
+    if dry_run or not page_urls:
+        return False, False
+    sitemap = subprocess.run(
+        ["curl", "-fsS", SITE_BASE + "/sitemap.xml"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    sitemap_ok = sitemap.returncode == 0 and page_urls[0] in sitemap.stdout
+    page = subprocess.run(
+        ["curl", "-fsS", "-L", "-o", "/dev/null", "-w", "%{http_code}", page_urls[0]],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    page_ok = page.returncode == 0 and page.stdout.strip() == "200"
+    return sitemap_ok, page_ok
+
+
+def render_report(
+    growth_rate: float,
+    threshold: int,
+    before_count: int,
+    assessments: list[QualityAssessment],
+    published: list[tuple[DraftItem, str]],
+    local_generated: bool,
+    live_uploaded: bool,
+    sitemap_verified: bool,
+    page_verified: bool,
+    homepage_changed: bool,
+    calendar_changed: bool,
+    metadata_backfill: bool,
+    dry_run: bool,
+    saved_count: int,
+) -> str:
+    lines = [
+        "# Daily Page Growth",
+        "",
+        f"- Growth rate target: {growth_rate:.0%}",
+        f"- Quality threshold: {threshold}/100",
+        f"- Page count before: {before_count}",
+        f"- Drafts reviewed: {len(assessments)}",
+        f"- Drafts eligible: {sum(1 for item in assessments if item.eligible)}",
+        f"- New pages published: {0 if dry_run else len(published)}",
+        f"- local generated: {'yes' if local_generated else 'no'}",
+        f"- live files uploaded: {'yes' if live_uploaded else 'no'}",
+        f"- live sitemap verified: {'yes' if sitemap_verified else 'no'}",
+        f"- live page spot-check passed: {'yes' if page_verified else 'no'}",
+        f"- Homepage updated: {'yes' if homepage_changed else 'no'}",
+        f"- Calendar updated: {'yes' if calendar_changed else 'no'}",
+        f"- Metadata backfill: {'yes' if metadata_backfill else 'no'}",
+        f"- Unpublished drafts saved for review: {saved_count}",
+        "",
+        "## Quality Review",
+        "",
+    ]
+    if assessments:
+        for assessment in assessments:
+            status = "PASS" if assessment.eligible else "HOLD"
+            lines.append(
+                f"- {status} {assessment.score}/100 · {assessment.item.title} · {'; '.join(assessment.reasons)}"
+            )
+    else:
+        lines.append("- No draft pages available.")
+
+    lines.extend(["", "## Published Pages", ""])
+    if published:
+        for item, url in published:
+            lines.append(f"- {item.title} -> {url}")
+    else:
+        lines.append("- No new page was published this run; see the saved review queue for the exact reason.")
+
+    if dry_run:
+        lines.extend(["", "## Dry Run", "", "No files were written or uploaded."])
+    return "\n".join(lines) + "\n"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--growth-rate", type=float, default=0.05)
+    parser.add_argument("--quality-threshold", type=int, default=90)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    current_pages = page_count()
-    target_files = max(1, math.ceil(current_pages * args.growth_rate))
-    candidates = collect_candidates(max(target_files, 10))
-    selected = candidates[:target_files]
+    before_count = page_count()
+    target_files = max(1, math.ceil(before_count * args.growth_rate))
+    candidates = collect_candidates()
+    assessments = [assess_quality(item, args.quality_threshold) for item in candidates]
+    eligible_assessments = [
+        assessment
+        for assessment in assessments
+        if assessment.eligible and not make_page_path(assessment.item, profile_for(assessment.item)).exists()
+    ]
+    selected_assessments = eligible_assessments[:target_files]
+    eligible = [assessment.item for assessment in selected_assessments]
+
+    saved_items: list[tuple[DraftItem, str, str]] = []
+    selected_keys = {f"{item.title.strip().lower()}|{item.topic.strip().lower()}" for item in eligible}
+    for assessment in assessments:
+        item = assessment.item
+        key = f"{item.title.strip().lower()}|{item.topic.strip().lower()}"
+        page_path = make_page_path(item, profile_for(item))
+        if key in selected_keys:
+            continue
+        if not assessment.eligible:
+            reason = f"quality score {assessment.score}/100 below threshold"
+        elif page_path.exists():
+            reason = "matching page already exists; review for update or consolidation"
+        else:
+            reason = "eligible but held by the monthly growth cap"
+        saved_items.append((item, reason, "pending"))
 
     published: list[tuple[DraftItem, str]] = []
     created_paths: list[Path] = []
-    created_urls: list[str] = []
 
-    for item in selected:
+    for item in eligible:
         profile = profile_for(item)
         page_path = make_page_path(item, profile)
-        url = SITE_BASE + relative_url(page_path)
+        url = page_url(page_path)
         if not args.dry_run:
             page_path.parent.mkdir(parents=True, exist_ok=True)
             page_path.write_text(build_html(item, profile, url), encoding="utf-8")
         created_paths.append(page_path)
-        created_urls.append(url)
         published.append((item, url))
 
-    sitemap_changed = False
     homepage_changed = False
+    sitemap_changed = False
     calendar_changed = False
-    if not args.dry_run:
-        sitemap_changed = update_sitemap(created_urls)
+    metadata_backfill = False
+    deployed = False
+    sitemap_verified = False
+    page_verified = False
+
+    if not args.dry_run and published:
+        sitemap_changed = update_sitemap([url for _, url in published])
         homepage_changed = update_homepage(published)
         calendar_changed = mark_calendar_published({item.title for item, _ in published})
-        subprocess.run([sys.executable, str(METADATA_SCRIPT)], cwd=ROOT, check=True)
+        metadata_backfill, asset_paths = run_metadata(created_paths + [HOMEPAGE_PATH], args.dry_run)
+        deploy_list = created_paths + [SITEMAP_PATH, HOMEPAGE_PATH]
+        deploy_list.extend(asset_paths)
+        deployed = deploy_files(deploy_list, args.dry_run)
+        sitemap_verified, page_verified = verify_live([url for _, url in published], args.dry_run)
 
-    report_lines = [
-        "# Daily Page Growth",
-        "",
-        f"- Growth rate target: {args.growth_rate:.0%}",
-        f"- Page count before: {current_pages}",
-        f"- New pages targeted: {target_files}",
-        f"- New pages published: {0 if args.dry_run else len(published)}",
-        f"- Sitemap updated: {'yes' if sitemap_changed else 'no'}",
-        f"- Homepage updated: {'yes' if homepage_changed else 'no'}",
-        f"- Calendar updated: {'yes' if calendar_changed else 'no'}",
-        f"- Metadata backfill: {'yes' if not args.dry_run else 'no'}",
-        "",
-        "## Published Pages",
-        "",
-    ]
-    if published:
-        for item, url in published:
-            report_lines.append(f"- {item.title} -> {url}")
-    else:
-        report_lines.append("- No draft pages available.")
-    report_lines.append("")
+    saved_count = 0 if args.dry_run else save_unpublished(saved_items)
 
-    if args.dry_run:
-        report_lines.append("## Dry Run")
-        report_lines.append("")
-        report_lines.append("No files were written.")
-        report_lines.append("")
-
+    report = render_report(
+        growth_rate=args.growth_rate,
+        threshold=args.quality_threshold,
+        before_count=before_count,
+        assessments=assessments,
+        published=published,
+        local_generated=bool(published) and not args.dry_run,
+        live_uploaded=deployed,
+        sitemap_verified=sitemap_verified,
+        page_verified=page_verified,
+        homepage_changed=homepage_changed,
+        calendar_changed=calendar_changed,
+        metadata_backfill=metadata_backfill,
+        dry_run=args.dry_run,
+        saved_count=saved_count,
+    )
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_PATH.write_text("\n".join(report_lines), encoding="utf-8")
-    print("\n".join(report_lines))
+    REPORT_PATH.write_text(report, encoding="utf-8")
+    print(report.rstrip())
     print(f"Saved report to {REPORT_PATH}")
     return 0
 
