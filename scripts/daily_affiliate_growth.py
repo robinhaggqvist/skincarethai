@@ -882,6 +882,17 @@ def main() -> int:
         )
         if pipeline_result.returncode != 0:
             print("Warning: content pipeline backlog report failed", file=sys.stderr)
+    keyword_planner = ROOT / "scripts" / "seo_keyword_plan.py"
+    if keyword_planner.exists() and not args.dry_run:
+        keyword_result = subprocess.run(
+            [sys.executable, str(keyword_planner)],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if keyword_result.returncode != 0:
+            print("Warning: SEO keyword plan failed", file=sys.stderr)
     return 0
 
 
