@@ -2,19 +2,19 @@
 
 - Growth rate target: 5%
 - Quality threshold: 80/100
-- Page count before: 382
-- Drafts reviewed: 12
-- Drafts eligible: 12
+- Page count before: 387
+- Drafts reviewed: 17
+- Drafts eligible: 17
 - New pages published: 0
-- Already published/live: 12
+- Already published/live: 17
 - local generated: no
 - live files uploaded: no
 - live sitemap verified: no
 - live page spot-check passed: no
 - Homepage updated: no
-- Calendar updated: yes
+- Calendar updated: no
 - Metadata backfill: no
-- Unpublished drafts saved for review: 12
+- Unpublished drafts saved for review: 17
 
 ## Quality Review
 
@@ -30,6 +30,11 @@
 - PASS 89/100 · แชมพูแก้ผมร่วงเลือกยังไง? สิ่งที่ควรดูและตัวอย่างแนวทางดูแล · calendar has named sources; queue is backed by 1 source; queue has 1 topic hint; angle is custom instead of boilerplate; title is Thai-first; title reads like a real query
 - PASS 98/100 · กันแดดคนเป็นสิวควรเลือกแบบไหน? เนื้อสัมผัสและส่วนผสมที่ควรมองหา · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first; title reads like a real query
 - PASS 98/100 · ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first; title reads like a real query
+- PASS 94/100 · กันแดดคนเป็นสิวสำหรับผิวมัน: เนื้อสัมผัสและการใช้ระหว่างวัน · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first
+- PASS 94/100 · กันแดดคนเป็นสิวงบไม่เกิน 300 บาท: เทียบความคุ้มต่อการใช้จริง · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first
+- PASS 94/100 · กันแดดเด็กผิวแพ้ง่าย: เช็กอายุ ฉลาก และวิธีทาซ้ำ · calendar has named sources; queue is backed by 3 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first
+- PASS 94/100 · เซรั่มวิตามินซีสำหรับรอยสิว: ดูสูตรและความเสถียรก่อนเปอร์เซ็นต์ · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first
+- PASS 94/100 · ครีมหน้าใสสำหรับผิวแพ้ง่าย: เริ่มจากความชุ่มชื้นและรูทีนที่ไม่ซับซ้อน · calendar has named sources; queue is backed by 5 sources; queue has 7 topic hints; angle is custom instead of boilerplate; title is Thai-first
 
 ## Published Pages
 

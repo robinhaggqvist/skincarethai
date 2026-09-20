@@ -2,9 +2,9 @@
 
 - Generated: 2026-09-20
 - Quality threshold: 80/100
-- Candidates reviewed: 12
+- Candidates reviewed: 17
 - New/deploy lane: 0
-- Update lane: 11
+- Update lane: 16
 - Already live: 1
 - Hold lane: 0
 
@@ -25,6 +25,11 @@
 - 98/100 · รูขุมขนกว้างแก้ยังไง? วิธีดูแลผิวให้ดูเรียบขึ้นแบบไม่เวอร์ · live page has substantial source support; review for a meaningful update
 - 98/100 · กันแดดคนเป็นสิวควรเลือกแบบไหน? เนื้อสัมผัสและส่วนผสมที่ควรมองหา · live page has substantial source support; review for a meaningful update
 - 98/100 · ขาลายแก้ยังไง? วิธีดูแลรอยและผิวไม่สม่ำเสมอ · live page has substantial source support; review for a meaningful update
+- 94/100 · กันแดดคนเป็นสิวสำหรับผิวมัน: เนื้อสัมผัสและการใช้ระหว่างวัน · live page has substantial source support; review for a meaningful update
+- 94/100 · กันแดดคนเป็นสิวงบไม่เกิน 300 บาท: เทียบความคุ้มต่อการใช้จริง · live page has substantial source support; review for a meaningful update
+- 94/100 · กันแดดเด็กผิวแพ้ง่าย: เช็กอายุ ฉลาก และวิธีทาซ้ำ · live page has substantial source support; review for a meaningful update
+- 94/100 · เซรั่มวิตามินซีสำหรับรอยสิว: ดูสูตรและความเสถียรก่อนเปอร์เซ็นต์ · live page has substantial source support; review for a meaningful update
+- 94/100 · ครีมหน้าใสสำหรับผิวแพ้ง่าย: เริ่มจากความชุ่มชื้นและรูทีนที่ไม่ซับซ้อน · live page has substantial source support; review for a meaningful update
 
 ## Already live
 
