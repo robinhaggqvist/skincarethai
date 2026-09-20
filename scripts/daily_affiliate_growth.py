@@ -621,6 +621,21 @@ def verify_live(page_urls: list[str], dry_run: bool) -> tuple[bool, bool]:
     return sitemap_ok, page_ok
 
 
+def live_sitemap_urls(dry_run: bool) -> set[str] | None:
+    """Return live sitemap URLs so local generated pages are not mistaken for new work."""
+    if dry_run:
+        return None
+    result = subprocess.run(
+        ["curl", "-fsS", "--max-time", "20", SITE_BASE + "/sitemap.xml"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    return set(re.findall(r"<loc>(.*?)</loc>", result.stdout))
+
+
 def render_report(
     growth_rate: float,
     threshold: int,
@@ -636,6 +651,7 @@ def render_report(
     metadata_backfill: bool,
     dry_run: bool,
     saved_count: int,
+    already_published: int,
 ) -> str:
     lines = [
         "# Daily Page Growth",
@@ -646,6 +662,7 @@ def render_report(
         f"- Drafts reviewed: {len(assessments)}",
         f"- Drafts eligible: {sum(1 for item in assessments if item.eligible)}",
         f"- New pages published: {0 if dry_run else len(published)}",
+        f"- Already published/live: {already_published}",
         f"- local generated: {'yes' if local_generated else 'no'}",
         f"- live files uploaded: {'yes' if live_uploaded else 'no'}",
         f"- live sitemap verified: {'yes' if sitemap_verified else 'no'}",
@@ -672,7 +689,7 @@ def render_report(
         for item, url in published:
             lines.append(f"- {item.title} -> {url}")
     else:
-        lines.append("- No new page was published this run; see the saved review queue for the exact reason.")
+        lines.append("- No new page was needed: eligible candidates were already live or were held with an explicit reason.")
 
     if dry_run:
         lines.extend(["", "## Dry Run", "", "No files were written or uploaded."])
@@ -690,15 +707,25 @@ def main() -> int:
     target_files = max(1, math.ceil(before_count * args.growth_rate))
     candidates = collect_candidates()
     assessments = [assess_quality(item, args.quality_threshold) for item in candidates]
+    live_urls = live_sitemap_urls(args.dry_run)
     eligible_assessments = [
         assessment
         for assessment in assessments
-        if assessment.eligible and not make_page_path(assessment.item, profile_for(assessment.item)).exists()
+        if assessment.eligible
+        and not (
+            make_page_path(assessment.item, profile_for(assessment.item)).exists()
+            and (
+                live_urls is None
+                or page_url(make_page_path(assessment.item, profile_for(assessment.item))) in live_urls
+            )
+        )
     ]
     selected_assessments = eligible_assessments[:target_files]
     eligible = [assessment.item for assessment in selected_assessments]
 
     saved_items: list[tuple[DraftItem, str, str]] = []
+    already_published = 0
+    already_published_titles: set[str] = set()
     selected_keys = {f"{item.title.strip().lower()}|{item.topic.strip().lower()}" for item in eligible}
     for assessment in assessments:
         item = assessment.item
@@ -708,8 +735,18 @@ def main() -> int:
             continue
         if not assessment.eligible:
             reason = f"quality score {assessment.score}/100 below threshold"
+        elif page_path.exists() and live_urls is not None and page_url(page_path) in live_urls:
+            already_published += 1
+            already_published_titles.add(item.title)
+            reason = "already published and present in the live sitemap"
+            saved_items.append((item, reason, "already_published"))
+            continue
+        elif page_path.exists() and live_urls is None:
+            reason = "local page exists; live sitemap could not be checked safely"
+            saved_items.append((item, reason, "needs_live_check"))
+            continue
         elif page_path.exists():
-            reason = "matching page already exists; review for update or consolidation"
+            reason = "local page exists but is not present in the live sitemap; queued for deployment"
         else:
             reason = "eligible but held by the monthly growth cap"
         saved_items.append((item, reason, "pending"))
@@ -746,6 +783,8 @@ def main() -> int:
         sitemap_verified, page_verified = verify_live([url for _, url in published], args.dry_run)
 
     saved_count = 0 if args.dry_run else save_unpublished(saved_items)
+    if not args.dry_run and already_published_titles:
+        calendar_changed = mark_calendar_published(already_published_titles) or calendar_changed
 
     report = render_report(
         growth_rate=args.growth_rate,
@@ -762,6 +801,7 @@ def main() -> int:
         metadata_backfill=metadata_backfill,
         dry_run=args.dry_run,
         saved_count=saved_count,
+        already_published=already_published,
     )
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(report, encoding="utf-8")
