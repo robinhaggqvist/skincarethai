@@ -807,6 +807,17 @@ def main() -> int:
     REPORT_PATH.write_text(report, encoding="utf-8")
     print(report.rstrip())
     print(f"Saved report to {REPORT_PATH}")
+    pipeline_reporter = ROOT / "scripts" / "report_content_pipeline.py"
+    if pipeline_reporter.exists() and not args.dry_run:
+        pipeline_result = subprocess.run(
+            [sys.executable, str(pipeline_reporter), "--quality-threshold", str(args.quality_threshold)],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if pipeline_result.returncode != 0:
+            print("Warning: content pipeline backlog report failed", file=sys.stderr)
     return 0
 
 

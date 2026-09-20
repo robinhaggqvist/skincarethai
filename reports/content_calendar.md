@@ -4,7 +4,7 @@
 - Topic hint: รีวิวครีมหน้าใส
 - Priority: 7 / 7
 - Sources: Erk-Erk, Pantip Beauty Forum, Jeban, Wongnai Beauty, Jell Story
-- Status: draft
+- Status: published
 
 ## 2026-09-22 · whitening cream review ในมุมที่คนไทยกำลังสนใจ
 - Topic hint: whitening cream review
